@@ -1,147 +1,172 @@
-// --- Core that must always run ---
-(function ensureReady(fn){
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
-  else fn();
-})(function(){
+// Ensure load order
+(function ready(fn){document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn):fn();})(function(){
 
-  /* YEAR */
-  var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
+/* YEAR */
+var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
 
-  /* THEME TOGGLE (guaranteed) */
-  var root = document.documentElement;
-  var btnToggle = document.getElementById('themeToggle');
-  if (btnToggle) {
-    btnToggle.addEventListener('click', function(){
-      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      root.setAttribute('data-theme', next);
-      try { localStorage.setItem('theme', next); } catch(e){}
-    });
-  }
+/* THEME TOGGLE */
+var root = document.documentElement;
+var tbtn = document.getElementById('themeToggle');
+if (tbtn) tbtn.addEventListener('click', function(){
+  var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  try { localStorage.setItem('theme', next); } catch(e){}
+});
 
-  /* TYPEWRITER — independent, no GSAP needed */
-  (function(){
-    var el = document.getElementById('typed');
-    if (!el) return;
-    var words = [
-      "Data Engineering",
-      "Automation Architect",
-      "Visualization Designer",
-      "ETL Pipeline Builder",
-      "Power BI Developer"
-    ];
-    var i=0, len=0, del=false;
-    function tick(){
-      var full = words[i];
-      el.textContent = del ? full.slice(0, --len) : full.slice(0, ++len);
-      var speed = del ? 70 : 110;
-      if (!del && len === full.length){ del = true; speed = 1200; }
-      if (del && len === 0){ del = false; i = (i+1)%words.length; speed = 500; }
-      setTimeout(tick, speed);
-    }
-    tick();
+/* TYPEWRITER — independent of libraries */
+(function(){
+  var el = document.getElementById('typed');
+  if (!el) return;
+  var words = ["Data Engineering","Automation Architect","Visualization Designer","ETL Pipeline Builder","Power BI Developer"];
+  var i=0, len=0, del=false;
+  (function loop(){
+    var full = words[i];
+    el.textContent = del ? full.slice(0, --len) : full.slice(0, ++len);
+    var speed = del ? 70 : 110;
+    if (!del && len === full.length){ del = true; speed = 1200; }
+    if (del && len === 0){ del = false; i = (i+1)%words.length; speed = 500; }
+    setTimeout(loop, speed);
   })();
+})();
 
-  /* Cursor aura + trail */
-  var cursor = document.getElementById('cursor');
-  var trail = document.getElementById('trail');
-  window.addEventListener('mousemove', function(e){
-    if (cursor) cursor.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
-    if (trail) { trail.style.setProperty('--tx', e.clientX + 'px'); trail.style.setProperty('--ty', e.clientY + 'px'); }
+/* Cursor aura + trail */
+var cursor = document.getElementById('cursor');
+var trail = document.getElementById('trail');
+window.addEventListener('mousemove', function(e){
+  if (cursor) cursor.style.transform = 'translate('+e.clientX+'px,'+e.clientY+'px)';
+  if (trail) { trail.style.setProperty('--tx', e.clientX + 'px'); trail.style.setProperty('--ty', e.clientY + 'px'); }
+});
+
+/* Magnetic hover */
+document.querySelectorAll('.magnet').forEach(function(btn){
+  btn.addEventListener('mousemove', function(e){
+    var r = btn.getBoundingClientRect();
+    btn.style.setProperty('--mx', ((e.clientX - r.left)/r.width)*100 + '%');
+    btn.style.setProperty('--my', ((e.clientY - r.top)/r.height)*100 + '%');
   });
+});
 
-  /* Magnetic hover */
-  document.querySelectorAll('.magnet').forEach(function(btn){
-    btn.addEventListener('mousemove', function(e){
-      var r = btn.getBoundingClientRect();
-      btn.style.setProperty('--mx', ((e.clientX - r.left)/r.width)*100 + '%');
-      btn.style.setProperty('--my', ((e.clientY - r.top)/r.height)*100 + '%');
+/* VanillaTilt (optional) */
+if (window.VanillaTilt) {
+  VanillaTilt.init(document.querySelectorAll('.tilt, .card, .chip'), { max: 10, speed: 700, glare: true, 'max-glare': .18, gyroscope: true });
+}
+
+/* Filters with animation */
+var filters = document.querySelectorAll('.filter');
+var cards = Array.from(document.querySelectorAll('.card'));
+filters.forEach(function(f){
+  f.addEventListener('click', function(){
+    filters.forEach(function(x){ x.classList.remove('active'); });
+    f.classList.add('active');
+    var tag = f.dataset.filter;
+
+    var toHide = cards.filter(function(c){ return !(tag === 'all' || c.dataset.tags.split(' ').includes(tag)); });
+    var toShow = cards.filter(function(c){ return (tag === 'all' || c.dataset.tags.split(' ').includes(tag)); });
+
+    toHide.forEach(function(c){ c.style.pointerEvents = 'none'; });
+    toShow.forEach(function(c){ c.style.pointerEvents = 'none'; });
+
+    if (window.gsap) {
+      gsap.to(toHide, { opacity: 0, y: 20, filter: 'blur(4px)', duration: 0.25, onComplete: function(){
+        toHide.forEach(function(c){ c.style.display = 'none'; });
+        toShow.forEach(function(c){ c.style.display = ''; });
+        gsap.fromTo(toShow, { opacity: 0, y: 24, filter: 'blur(6px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.4, stagger: 0.05, onComplete: function(){
+              toShow.forEach(function(c){ c.style.pointerEvents = ''; });
+            }
+          });
+      }});
+    } else {
+      toHide.forEach(function(c){ c.style.display = 'none'; c.style.opacity = 0; });
+      toShow.forEach(function(c){ c.style.display = ''; c.style.opacity = 1; c.style.filter=''; c.style.transform=''; });
+      toShow.forEach(function(c){ c.style.pointerEvents = ''; });
+    }
+  });
+});
+
+/* Resume modal */
+var modal = document.getElementById('resumeModal');
+document.getElementById('openResume')?.addEventListener('click', function(){ modal?.showModal(); });
+document.getElementById('closeResume')?.addEventListener('click', function(){ modal?.close(); });
+
+/* Scroll indicator */
+document.querySelector('.scroll-indicator')?.addEventListener('click', function(){
+  document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
+});
+
+/* ---------------- Fancy Extras if libs exist ---------------- */
+try {
+  if (window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Split title into chars (guarded)
+    try {
+      new window.SplitType('.title-line', { types: 'chars,words' });
+      gsap.from('.char', { y: 80, rotateX: -90, opacity: 0, duration: 1.0, stagger: 0.02, ease: 'back.out(1.7)' });
+    } catch(e){}
+
+    // Hero entrance
+    gsap.from('.hero-photo', { scale: 0.92, opacity: 0, duration: 0.8, ease: 'power3.out' });
+    gsap.from('.lead', { opacity: 0, y: 30, duration: 0.6, delay: 0.15 });
+    gsap.from('.cta-row .btn', { opacity: 0, y: 24, stagger: 0.08, duration: 0.5, delay: 0.2 });
+    gsap.from('.stat', { opacity: 0, scale: 0.9, duration: 0.6, stagger: 0.06, ease: 'power2.out', delay: 0.25 });
+
+    // Section wipe reveals
+    document.querySelectorAll('.section').forEach(function(sec){
+      gsap.fromTo(sec,
+        { clipPath: 'inset(15% 15% 15% 15% round 16px)', opacity: 0, y: 20 },
+        { clipPath: 'inset(0% 0% 0% 0% round 16px)', opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: sec, start: 'top 80%' } }
+      );
     });
-  });
 
-  /* VanillaTilt (optional) */
-  if (window.VanillaTilt) {
-    VanillaTilt.init(document.querySelectorAll('.tilt, .card, .chip'), { max: 10, speed: 700, glare: true, 'max-glare': .18, gyroscope: true });
-  }
-
-  /* Filter buttons (works without libs) */
-  var filters = document.querySelectorAll('.filter');
-  var cards = document.querySelectorAll('.card');
-  filters.forEach(function(f){
-    f.addEventListener('click', function(){
-      filters.forEach(function(x){ x.classList.remove('active'); });
-      f.classList.add('active');
-      var tag = f.dataset.filter;
-      cards.forEach(function(c){
-        var show = tag === 'all' || c.dataset.tags.split(' ').includes(tag);
-        c.style.display = show ? '' : 'none';
-      });
-    });
-  });
-
-  // --- Fancy extras if GSAP/Three are available ---
-  try {
-    // GSAP block (guarded)
-    if (window.gsap && window.ScrollTrigger) {
-      gsap.registerPlugin(ScrollTrigger);
-
-      // SplitType title (guarded)
-      try { new window.SplitType('.title-line', { types: 'chars,words' });
-            gsap.from('.char', { y: 80, rotateX: -90, opacity: 0, duration: 1.0, stagger: 0.02, ease: 'back.out(1.7)' });
-      } catch(e) {}
-
-      gsap.from('.hero-photo', { scale: 0.92, opacity: 0, duration: 0.8, ease: 'power3.out' });
-      gsap.from('.lead', { opacity: 0, y: 30, duration: 0.6, delay: 0.15 });
-      gsap.from('.cta-row .btn', { opacity: 0, y: 24, stagger: 0.08, duration: 0.5, delay: 0.2 });
-      gsap.from('.stat', { opacity: 0, scale: 0.9, duration: 0.6, stagger: 0.06, ease: 'power2.out', delay: 0.25 });
-
-      // Section wipes
-      document.querySelectorAll('.section').forEach(function(sec){
-        gsap.from(sec, {
-          clipPath: 'inset(20% 20% 20% 20% round 20px)',
-          opacity: 0,
-          duration: 0.9,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: sec, start: 'top 80%' }
-        });
-      });
-
-      // Depth parallax for project grid (mousemove)
-      var grid = document.querySelector('.depth-parallax');
-      if (grid) {
-        grid.addEventListener('mousemove', function(e){
-          var r = grid.getBoundingClientRect();
-          var x = (e.clientX - r.left) / r.width - 0.5;
-          var y = (e.clientY - r.top) / r.height - 0.5;
-          gsap.to('.card', { x: x * 15, y: y * 10, rotateY: x * 3, rotateX: -y * 3, duration: 0.4, overwrite: true });
-        });
-        grid.addEventListener('mouseleave', function(){
-          gsap.to('.card', { x: 0, y: 0, rotateX: 0, rotateY: 0, duration: 0.6 });
-        });
-      }
-
-      // Scroll skew on cards
-      var proxy = { skew: 0 }, setSkew = gsap.quickSetter('.card', 'skewY', 'deg');
-      ScrollTrigger.create({
-        onUpdate: function(self){
-          var s = gsap.utils.clamp(-10, 10, self.getVelocity() / -300);
-          if (Math.abs(s) > Math.abs(proxy.skew)) {
-            proxy.skew = s;
-            gsap.to(proxy, { skew: 0, duration: 0.6, ease: 'power3', overwrite: true });
-          }
-          setSkew(proxy.skew);
+    // Scroll skew on cards
+    var proxy = { skew: 0 }, setSkew = gsap.quickSetter('.card', 'skewY', 'deg');
+    ScrollTrigger.create({
+      onUpdate: function(self){
+        var s = gsap.utils.clamp(-10, 10, self.getVelocity() / -300);
+        if (Math.abs(s) > Math.abs(proxy.skew)) {
+          proxy.skew = s;
+          gsap.to(proxy, { skew: 0, duration: 0.6, ease: 'power3', overwrite: true });
         }
-      });
+        setSkew(proxy.skew);
+      }
+    });
 
-      // Parallax hero photo on scroll
-      gsap.to('.hero-photo', { yPercent: -8, scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.5 }});
+    // Hero parallax layers
+    if (document.querySelector('.hero-photo')) {
+      gsap.to('.hero-photo .blob', {
+        scale: 1.1, rotate: 15,
+        scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.6 }
+      });
+      gsap.to('.ring1', { rotate: 90, scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.6 }});
+      gsap.to('.ring2', { rotate: -90, scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.6 }});
     }
 
-    // THREE.js shader + particles (guarded)
-    if (window.THREE) {
-      var canvas = document.getElementById('bg');
+    // Magnetic “repulsion” depth on cards
+    document.querySelectorAll('.card').forEach(function(card){
+      var xTo = gsap.quickTo(card, 'x', { duration: 0.4, ease: 'power3' });
+      var yTo = gsap.quickTo(card, 'y', { duration: 0.4, ease: 'power3' });
+      var rXTo = gsap.quickTo(card, 'rotateX', { duration: 0.4, ease: 'power3' });
+      var rYTo = gsap.quickTo(card, 'rotateY', { duration: 0.4, ease: 'power3' });
+
+      card.addEventListener('mousemove', function(e){
+        var rect = card.getBoundingClientRect();
+        var dx = (e.clientX - rect.left) / rect.width - 0.5;
+        var dy = (e.clientY - rect.top) / rect.height - 0.5;
+        xTo(dx * 10); yTo(dy * 10); rXTo(-dy * 6); rYTo(dx * 6);
+      });
+      card.addEventListener('mouseleave', function(){ xTo(0); yTo(0); rXTo(0); rYTo(0); });
+    });
+  }
+
+  // THREE.js shader + flying particles (guarded)
+  if (window.THREE) {
+    var canvas = document.getElementById('bg'); if (canvas) {
       var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
       var shaderScene = new THREE.Scene();
       var shaderCam = new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+
       var geo = new THREE.PlaneGeometry(2,2);
       var frag = `
         precision highp float;
@@ -189,8 +214,7 @@
         requestAnimationFrame(loop);
       })();
     }
-  } catch(e) {
-    console.warn('Optional animations skipped', e);
   }
+} catch(e){ console.warn('Optional animations skipped', e); }
 
 });
