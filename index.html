@@ -8,10 +8,26 @@
   <link rel="icon" href="assets/mustafa.jpg" type="image/jpeg" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="style.css" />
-  <!-- Motion & 3D libs (defer so DOMContentLoaded still fires after they load) -->
+
+  <!-- PRE-INIT THEME (runs before paint to avoid flashes) -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        if (!saved) {
+          var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+          document.documentElement.setAttribute('data-theme', prefersLight ? 'light' : 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+      } catch (e) {/* non-blocking */}
+    })();
+  </script>
+
+  <!-- Motion & 3D libs (optional, app still works without them) -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.26/dist/lenis.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/split-type@0.3.3/umd/index.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r155/three.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
 </head>
@@ -47,6 +63,7 @@
     <div class="hero-inner">
       <div class="hero-top">
         <div class="hero-photo tilt">
+          <div class="blob" aria-hidden="true"></div>
           <img src="assets/mustafa.jpg" alt="Mustafa Alsaegh portrait" />
           <span class="ring ring1"></span>
           <span class="ring ring2"></span>
@@ -57,7 +74,7 @@
         </h1>
       </div>
 
-      <!-- TYPEWRITER SUBTITLE (no library) -->
+      <!-- TYPEWRITER SUBTITLE -->
       <p class="typed-line">
         <span id="typed"></span><span class="cursor-blink">|</span>
       </p>
@@ -69,7 +86,6 @@
       <div class="cta-row">
         <a href="#projects" class="btn btn-primary magnet ripple">Explore Work</a>
         <a href="#contact" class="btn btn-ghost ripple">Contact</a>
-        <button class="btn btn-ghost ripple" id="openResume">View Résumé</button>
       </div>
 
       <div class="hero-stats">
@@ -79,21 +95,11 @@
       </div>
 
       <button class="scroll-indicator" aria-label="Scroll to content">Scroll</button>
-
-      <!-- Tech ticker -->
-      <div class="ticker">
-        <div class="track">
-          <span>Python</span><span>pandas</span><span>SQL</span><span>Power BI</span><span>DAX</span>
-          <span>Explorance Blue</span><span>Canvas API</span><span>ServiceNow</span><span>ETL</span><span>Automation</span>
-          <span>Python</span><span>pandas</span><span>SQL</span><span>Power BI</span><span>DAX</span>
-          <span>Explorance Blue</span><span>Canvas API</span><span>ServiceNow</span><span>ETL</span><span>Automation</span>
-        </div>
-      </div>
     </div>
   </section>
 
   <!-- ABOUT -->
-  <section id="about" class="section glass reveal">
+  <section id="about" class="section glass">
     <h2>About</h2>
     <p>
       I specialize in turning multi-source, messy institutional datasets into clean pipelines and clear analytics. I’ve built
@@ -104,7 +110,7 @@
   </section>
 
   <!-- EXPERIENCE -->
-  <section id="experience" class="section reveal">
+  <section id="experience" class="section">
     <h2>Experience</h2>
     <div class="timeline">
       <div class="t-item glass">
@@ -112,27 +118,27 @@
           <h3>Online Learning & Academic Tech — WCC</h3>
           <span>2024–Present • Ann Arbor, MI</span>
         </div>
-        <p>Built SOQ (Explorance Blue) dashboards, automated ETL merges (Banner ↔ Blue), managed survey deployments, and partnered with deans to interpret response trends.</p>
+        <p>Built SOQ (Explorance Blue) dashboards, automated ETL merges (Banner ↔ Blue), managed survey deployments, and collaborated with deans on response trends.</p>
       </div>
       <div class="t-item glass">
         <div class="t-meta">
           <h3>Research & Data Roles — Indiana University</h3>
           <span>2021–2024 • Bloomington, IN</span>
         </div>
-        <p>Python and SQL data wrangling, statistical reporting, and reproducible pipelines for academic analytics initiatives.</p>
+        <p>Python & SQL data wrangling, statistical reporting, and reproducible pipelines for academic analytics initiatives.</p>
       </div>
       <div class="t-item glass">
         <div class="t-meta">
           <h3>Freelance & Side Projects</h3>
           <span>Ongoing</span>
         </div>
-        <p>Automation scripts, interactive dashboards, Canvas/ServiceNow API tools, and data visualization consulting.</p>
+        <p>Automation scripts, interactive dashboards, Canvas/ServiceNow API tools, and visualization consulting.</p>
       </div>
     </div>
   </section>
 
   <!-- SKILLS -->
-  <section id="skills" class="section reveal">
+  <section id="skills" class="section">
     <h2>Skills</h2>
     <ul class="chip-grid">
       <li class="chip tilt">Python</li>
@@ -151,7 +157,7 @@
   </section>
 
   <!-- PROJECTS -->
-  <section id="projects" class="section glass reveal">
+  <section id="projects" class="section glass">
     <div class="section-head">
       <h2>Featured Projects</h2>
       <div class="filters" role="tablist" aria-label="Project filters">
@@ -162,7 +168,7 @@
       </div>
     </div>
 
-    <div class="grid">
+    <div class="grid depth-parallax">
       <article class="card tilt shine" data-tags="dashboard">
         <img src="assets/project1.jpg" alt="SOQ analytics dashboard preview" />
         <div class="card-body">
@@ -176,7 +182,7 @@
         <img src="assets/project2.jpg" alt="ETL automation pipeline preview" />
         <div class="card-body">
           <h3>ETL Automation Pipeline</h3>
-          <p>Python pipeline merging Banner + Blue with validation, dedupe, quality checks, and scheduled exports.</p>
+          <p>Python pipeline merging Banner + Blue with validation, dedupe, data quality checks, and scheduled exports.</p>
           <div class="tags"><span>Python</span><span>pandas</span><span>Scheduling</span></div>
         </div>
       </article>
@@ -202,14 +208,14 @@
   </section>
 
   <!-- CASE STUDIES -->
-  <section id="cases" class="section reveal">
+  <section id="cases" class="section">
     <h2>Case Studies</h2>
     <div class="cases">
       <details class="case glass">
         <summary><b>Boosting SOQ Response Rates</b> — division dashboards & nudges</summary>
         <div class="case-body">
           <p><b>Context:</b> SOQ participation varied by modality and part-of-term.</p>
-          <p><b>Solution:</b> Response dashboards with slicers: division/department/instructor; automated reminders with deep links.</p>
+          <p><b>Solution:</b> Built response dashboards with slicers for division/department/instructor; added automated reminder copy with deep links.</p>
           <p><b>Impact:</b> +12–18% response rate in targeted cohorts; faster end-of-term insights for deans.</p>
         </div>
       </details>
@@ -217,15 +223,15 @@
         <summary><b>Canvas → Analytics</b> — nightly sync + warehouse schema</summary>
         <div class="case-body">
           <p><b>Context:</b> Multiple systems tracked courses and instructors differently.</p>
-          <p><b>Solution:</b> Python/REST sync normalizing IDs & roles; canonical tables for downstream BI.</p>
-          <p><b>Impact:</b> Reliable single-source-of-truth for dashboards & audits.</p>
+          <p><b>Solution:</b> Python/REST sync process normalizing IDs and roles, writing canonical tables.</p>
+          <p><b>Impact:</b> Reliable single-source-of-truth for downstream dashboards & audits.</p>
         </div>
       </details>
     </div>
   </section>
 
   <!-- CERTIFICATIONS -->
-  <section id="certs" class="section glass reveal">
+  <section id="certs" class="section glass">
     <h2>Certifications</h2>
     <ul class="certs">
       <li><span>Power BI Associate</span> — Microsoft</li>
@@ -236,7 +242,7 @@
   </section>
 
   <!-- TESTIMONIALS -->
-  <section id="testimonials" class="section reveal">
+  <section id="testimonials" class="section">
     <h2>Testimonials</h2>
     <div class="quotes">
       <blockquote class="quote glass">
@@ -251,7 +257,7 @@
   </section>
 
   <!-- CONTACT -->
-  <section id="contact" class="section reveal">
+  <section id="contact" class="section">
     <h2>Let’s Connect</h2>
     <p>Have a role or idea? I’m open to collaborations and interesting problems.</p>
     <div class="cta-row">
@@ -265,18 +271,7 @@
     © <span id="y"></span> Mustafa Alsaegh — Built with ❤️, GSAP, Three.js & VanillaTilt
   </footer>
 
-  <!-- Resume Modal -->
-  <dialog id="resumeModal" class="resume-modal glass">
-    <div class="resume-head">
-      <h3>Résumé — PDF Preview</h3>
-      <button id="closeResume" class="btn btn-ghost ripple">Close</button>
-    </div>
-    <iframe id="resumeFrame" src="assets/resume.pdf" title="Resume PDF" loading="lazy"></iframe>
-    <div class="resume-actions">
-      <a class="btn btn-primary ripple" href="assets/resume.pdf" download>Download PDF</a>
-    </div>
-  </dialog>
-
-  <script defer src="script.js"></script>
+  <script src="script.js" defer></script>
+  <noscript><style>.section,.navbar,.footer{opacity:1!important;transform:none!important}</style></noscript>
 </body>
 </html>
