@@ -18,12 +18,12 @@
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
 </head>
 <body>
-  <!-- Animated shader background -->
-  <canvas id="bg"></canvas>
+  <!-- Animated shader + particles background -->
+  <canvas id="bg" aria-hidden="true"></canvas>
 
-  <!-- Cursor aura + trailing dots -->
-  <div id="cursor"></div>
-  <div id="trail"></div>
+  <!-- Cursor aura + gradient trail -->
+  <div id="cursor" aria-hidden="true"></div>
+  <div id="trail" aria-hidden="true"></div>
 
   <!-- Top navigation -->
   <header class="navbar glass">
@@ -55,10 +55,11 @@
           <span class="title-line">Hey, I’m <b>Mustafa</b>.</span>
         </h1>
       </div>
-<p class="typed-line">
-  <span id="typed"></span><span class="cursor-blink">|</span>
-</p>
 
+      <!-- TYPEWRITER SUBTITLE -->
+      <p class="typed-line">
+        <span id="typed"></span><span class="cursor-blink">|</span>
+      </p>
 
       <p class="lead">
         I build intelligent data systems — Python ETL, ServiceNow/Canvas integrations, and interactive Power BI experiences that turn raw data into decisions.
