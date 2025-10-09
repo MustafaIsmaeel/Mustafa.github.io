@@ -5,102 +5,76 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mustafa Alsaegh | Portfolio</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="assets/profile.jpg" type="image/png">
-  <script src="https://unpkg.com/scrollreveal"></script>
+  <link rel="icon" href="assets/profile.png" type="image/png" />
 </head>
-
 <body>
-  <header>
-    <nav class="navbar">
-      <h1 class="logo">Mustafa<span>_Alsaegh</span></h1>
-      <ul class="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
+  <canvas id="bg"></canvas>
+
+  <header class="navbar">
+    <h1 class="logo">Mustafa<span>.dev</span></h1>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
   </header>
 
   <section id="hero">
     <div class="hero-content">
-      <h2 class="reveal">Hey, I’m <span>Mustafa</span></h2>
-      <h3 class="reveal delay">Data Engineer & Developer</h3>
-      <p class="reveal delay2">
-        Passionate about automation, AI, and data visualization. I build systems that
-        turn complex data into insight — from Python ETL pipelines to dynamic Power BI dashboards.
-      </p>
-      <a href="#projects" class="btn reveal delay3">Explore My Work</a>
+      <h2 class="gradient-text animate-text">Hey, I’m Mustafa</h2>
+      <p class="subtitle">Data Engineer • Automation Architect • Power BI Designer</p>
+      <p class="desc">I craft intelligent systems that automate data flows and visualize insight — from Python pipelines to Power BI dashboards.</p>
+      <a href="#projects" class="btn-glow">Explore My Work</a>
     </div>
-    <img src="assets/profile.jpg" alt="Mustafa" class="hero-img reveal delay4">
-    <div class="scroll-down">⬇</div>
   </section>
 
-  <section id="about" class="section reveal">
+  <section id="about" class="section glass">
     <h2>About Me</h2>
     <p>
-      I’m a data-driven problem solver with expertise in Python, Power BI, ServiceNow, and Explorance Blue.
-      My work blends automation with storytelling — creating dashboards, scripts, and systems that
-      help organizations see patterns and make better decisions.
+      I’m passionate about transforming raw data into clear, actionable insights. I work with tools like Python, Power BI, and ServiceNow — building automation scripts, dashboards, and systems that help teams move faster.
     </p>
   </section>
 
-  <section id="skills" class="section reveal">
-    <h2>Technical Skills</h2>
-    <div class="skills-grid">
-      <div class="skill-card">Python</div>
-      <div class="skill-card">Power BI</div>
-      <div class="skill-card">ServiceNow</div>
-      <div class="skill-card">SQL</div>
-      <div class="skill-card">HTML/CSS/JS</div>
-      <div class="skill-card">Automation</div>
-      <div class="skill-card">Data Pipelines</div>
-      <div class="skill-card">Explorance Blue</div>
-    </div>
-  </section>
-
-  <section id="projects" class="section reveal">
-    <h2>Projects</h2>
-    <div class="project-grid">
+  <section id="projects" class="section glass">
+    <h2>Featured Projects</h2>
+    <div class="projects-grid">
       <div class="project-card">
         <img src="assets/project1.jpg" alt="">
-        <div class="overlay">
-          <h3>SOQ Analytics Dashboard</h3>
-          <p>Power BI visualization of student opinion data across divisions, with filters and KPIs.</p>
+        <div class="project-info">
+          <h3>SOQ Dashboard</h3>
+          <p>Interactive analytics dashboard visualizing faculty and student feedback trends.</p>
         </div>
       </div>
 
       <div class="project-card">
         <img src="assets/project2.jpg" alt="">
-        <div class="overlay">
-          <h3>Automation ETL Script</h3>
-          <p>Python script merging Banner + Blue datasets, auto-generating survey imports.</p>
+        <div class="project-info">
+          <h3>ETL Automation Script</h3>
+          <p>Python pipeline merging Banner + Blue data for automated evaluation imports.</p>
         </div>
       </div>
 
       <div class="project-card">
         <img src="assets/project3.jpg" alt="">
-        <div class="overlay">
-          <h3>Canvas Integration Tool</h3>
-          <p>Custom API tool for syncing Canvas course data to analytics dashboards.</p>
+        <div class="project-info">
+          <h3>Canvas Data API Tool</h3>
+          <p>API integration that syncs Canvas course and instructor data to analytics platforms.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="contact" class="section reveal">
-    <h2>Let’s Connect</h2>
-    <p>Want to collaborate or discuss a project?</p>
-    <a href="mailto:malsaegh1@gmail.com" class="btn">📧 Email Me</a>
+  <section id="contact" class="section glass">
+    <h2>Contact</h2>
+    <p>Let’s connect and build something impactful.</p>
+    <a href="mailto:malsaegh1@gmail.com" class="btn-glow">Email Me</a>
     <div class="socials">
       <a href="https://linkedin.com/in/mustafa-alsaegh" target="_blank">LinkedIn</a>
       <a href="https://github.com/mustafa" target="_blank">GitHub</a>
     </div>
   </section>
 
-  <footer>
-    <p>© 2025 Mustafa Alsaegh — Designed & coded by me with ❤️</p>
-  </footer>
+  <footer>© 2025 Mustafa Alsaegh — Built with ⚡ & coffee</footer>
 
   <script src="script.js"></script>
 </body>
