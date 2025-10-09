@@ -1,81 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mustafa Alsaegh | Portfolio</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="assets/profile.png" type="image/png" />
+  <link rel="icon" href="assets/profile.png" type="image/png"/>
+  <link rel="stylesheet" href="style.css"/>
+  <!-- External libs (CDN) -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r155/three.min.js"></script>
 </head>
 <body>
-  <canvas id="bg"></canvas>
+  <!-- 3D background -->
+  <canvas id="scene"></canvas>
 
-  <header class="navbar">
-    <h1 class="logo">Mustafa<span>.dev</span></h1>
-    <ul>
-      <li><a href="#about">About</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
+  <!-- Nav -->
+  <header class="navbar glass">
+    <a class="logo" href="#hero">Mustafa<span>.dev</span></a>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+      <button id="themeToggle" aria-label="Toggle theme" class="btn-icon" title="Toggle theme">
+        <span class="sun">☀</span><span class="moon">🌙</span>
+      </button>
+    </nav>
   </header>
 
-  <section id="hero">
-    <div class="hero-content">
-      <h2 class="gradient-text animate-text">Hey, I’m Mustafa</h2>
-      <p class="subtitle">Data Engineer • Automation Architect • Power BI Designer</p>
-      <p class="desc">I craft intelligent systems that automate data flows and visualize insight — from Python pipelines to Power BI dashboards.</p>
-      <a href="#projects" class="btn-glow">Explore My Work</a>
+  <!-- Hero -->
+  <section id="hero" class="viewport">
+    <div class="hero-inner">
+      <h1 class="title">
+        <span class="title-line">Hey, I’m <b>Mustafa</b>.</span>
+        <span class="title-line neon">Data Engineer • Automation • Visualization</span>
+      </h1>
+      <p class="lead">
+        I build intelligent data systems—Python ETL, ServiceNow/Canvas integrations, and interactive Power BI experiences.
+      </p>
+      <div class="cta-row">
+        <a href="#projects" class="btn btn-primary magnet">Explore Work</a>
+        <a href="mailto:malsaegh1@gmail.com" class="btn btn-ghost">Contact</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat glass tilt"><span>8+</span><small>Dashboards</small></div>
+        <div class="stat glass tilt"><span>50k+</span><small>Rows/ETL</small></div>
+        <div class="stat glass tilt"><span>API</span><small>Canvas/Blue</small></div>
+      </div>
     </div>
+    <div class="scroll-indicator">Scroll</div>
   </section>
 
-  <section id="about" class="section glass">
-    <h2>About Me</h2>
+  <!-- About -->
+  <section id="about" class="section glass reveal">
+    <h2>About</h2>
     <p>
-      I’m passionate about transforming raw data into clear, actionable insights. I work with tools like Python, Power BI, and ServiceNow — building automation scripts, dashboards, and systems that help teams move faster.
+      I turn messy, multi-source data into useful decisions. My stack: <b>Python</b> (pandas/ETL), <b>Power BI</b> (DAX/KPIs),
+      <b>ServiceNow/Canvas APIs</b>, and automation that keeps analytics fresh. I love clean UX and performance-minded JS.
     </p>
   </section>
 
-  <section id="projects" class="section glass">
-    <h2>Featured Projects</h2>
-    <div class="projects-grid">
-      <div class="project-card">
-        <img src="assets/project1.jpg" alt="">
-        <div class="project-info">
-          <h3>SOQ Dashboard</h3>
-          <p>Interactive analytics dashboard visualizing faculty and student feedback trends.</p>
-        </div>
-      </div>
+  <!-- Skills -->
+  <section id="skills" class="section reveal">
+    <h2>Skills</h2>
+    <ul class="chip-grid">
+      <li class="chip tilt">Python</li>
+      <li class="chip tilt">pandas</li>
+      <li class="chip tilt">Power BI (DAX)</li>
+      <li class="chip tilt">SQL</li>
+      <li class="chip tilt">ServiceNow</li>
+      <li class="chip tilt">Explorance Blue</li>
+      <li class="chip tilt">APIs / ETL</li>
+      <li class="chip tilt">HTML/CSS/JS</li>
+    </ul>
+  </section>
 
-      <div class="project-card">
-        <img src="assets/project2.jpg" alt="">
-        <div class="project-info">
-          <h3>ETL Automation Script</h3>
-          <p>Python pipeline merging Banner + Blue data for automated evaluation imports.</p>
-        </div>
+  <!-- Projects with filters -->
+  <section id="projects" class="section glass reveal">
+    <div class="section-head">
+      <h2>Projects</h2>
+      <div class="filters">
+        <button class="filter active" data-filter="all">All</button>
+        <button class="filter" data-filter="dashboard">Dashboards</button>
+        <button class="filter" data-filter="etl">ETL</button>
+        <button class="filter" data-filter="api">APIs</button>
       </div>
+    </div>
 
-      <div class="project-card">
-        <img src="assets/project3.jpg" alt="">
-        <div class="project-info">
-          <h3>Canvas Data API Tool</h3>
-          <p>API integration that syncs Canvas course and instructor data to analytics platforms.</p>
+    <div class="grid">
+      <article class="card tilt" data-tags="dashboard">
+        <img src="assets/project1.jpg" alt="SOQ Dashboard"/>
+        <div class="card-body">
+          <h3>SOQ Analytics Dashboard</h3>
+          <p>Division-level KPI tracking, response rates, and core question trends with slicers.</p>
+          <div class="tags"><span>Power BI</span><span>DAX</span></div>
         </div>
-      </div>
+      </article>
+
+      <article class="card tilt" data-tags="etl api">
+        <img src="assets/project2.jpg" alt="ETL Automation"/>
+        <div class="card-body">
+          <h3>ETL Automation Pipeline</h3>
+          <p>Python pipeline merging Banner + Blue; validation, dedupe, and scheduled exports.</p>
+          <div class="tags"><span>Python</span><span>pandas</span></div>
+        </div>
+      </article>
+
+      <article class="card tilt" data-tags="api">
+        <img src="assets/project3.jpg" alt="Canvas Tool"/>
+        <div class="card-body">
+          <h3>Canvas Data Integration</h3>
+          <p>Canvas API sync for courses/instructors → analytics warehouse for dashboards.</p>
+          <div class="tags"><span>REST</span><span>Auth</span></div>
+        </div>
+      </article>
+
+      <article class="card tilt" data-tags="dashboard">
+        <img src="assets/project4.jpg" alt="Admin Ops Dashboard"/>
+        <div class="card-body">
+          <h3>Admin Ops Dashboard</h3>
+          <p>Operational KPIs, alerts, and SLA health with drill-through details.</p>
+          <div class="tags"><span>Power BI</span><span>Automation</span></div>
+        </div>
+      </article>
     </div>
   </section>
 
-  <section id="contact" class="section glass">
-    <h2>Contact</h2>
-    <p>Let’s connect and build something impactful.</p>
-    <a href="mailto:malsaegh1@gmail.com" class="btn-glow">Email Me</a>
-    <div class="socials">
-      <a href="https://linkedin.com/in/mustafa-alsaegh" target="_blank">LinkedIn</a>
-      <a href="https://github.com/mustafa" target="_blank">GitHub</a>
+  <!-- Contact -->
+  <section id="contact" class="section reveal">
+    <h2>Let’s Connect</h2>
+    <p>Have a role or idea? I’m open to collabs and interesting problems.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary magnet" href="mailto:malsaegh1@gmail.com">Email Me</a>
+      <a class="btn btn-ghost" target="_blank" href="https://linkedin.com/in/mustafa-alsaegh">LinkedIn</a>
+      <a class="btn btn-ghost" target="_blank" href="https://github.com/mustafa">GitHub</a>
     </div>
   </section>
 
-  <footer>© 2025 Mustafa Alsaegh — Built with ⚡ & coffee</footer>
+  <footer class="footer glass">
+    © <span id="y"></span> Mustafa Alsaegh — Built with ❤️, GSAP, Three.js & VanillaTilt
+  </footer>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
