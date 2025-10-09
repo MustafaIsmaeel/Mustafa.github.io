@@ -1,11 +1,13 @@
+/* THEME TOKENS */
 :root{
-  --bg:#0b0f14;
+  --bg:#090d13;
   --panel:rgba(255,255,255,.06);
   --border:rgba(255,255,255,.12);
   --text:#e9eef6;
   --muted:#a9b4c2;
   --primary:#00e7ff;
   --accent:#ff3db3;
+  --shadow:0 16px 48px -18px rgba(0,0,0,.5);
 }
 :root[data-theme="light"]{
   --bg:#f7f9fc;
@@ -15,26 +17,35 @@
   --muted:#49566b;
   --primary:#006eff;
   --accent:#ff2e7a;
+  --shadow:0 16px 48px -18px rgba(0,0,0,.18);
 }
 
+/* BASE */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
   font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   color:var(--text);
-  background:radial-gradient(1200px 600px at 70% -10%, rgba(0,231,255,.08), transparent),
-             radial-gradient(900px 500px at 10% 0%, rgba(255,61,179,.08), transparent),
-             var(--bg);
+  background:
+    radial-gradient(1200px 600px at 70% -10%, rgba(0,231,255,.08), transparent),
+    radial-gradient(900px 500px at 10% 0%, rgba(255,61,179,.08), transparent),
+    var(--bg);
   overflow-x:hidden;
 }
 
 /* 3D canvas background */
-#scene{
-  position:fixed; inset:0; z-index:-1; display:block;
+#scene{position:fixed; inset:0; z-index:-2; display:block}
+
+/* Cursor aura */
+#cursor{
+  position:fixed; width:28px; height:28px; border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, var(--accent), transparent 60%);
+  mix-blend-mode:screen; pointer-events:none; z-index:999; opacity:.8;
+  transform:translate(-50%,-50%);
 }
 
-/* Glass + layout */
+/* GLASS + LAYOUT */
 .glass{
   background:var(--panel);
   border:1px solid var(--border);
@@ -43,6 +54,7 @@ body{
   border-radius:16px;
 }
 
+/* NAVBAR */
 .navbar{
   position:sticky; top:0; z-index:20;
   margin:12px; padding:10px 16px;
@@ -50,9 +62,12 @@ body{
 }
 .logo{font-weight:800; letter-spacing:.2px; text-decoration:none; color:var(--text)}
 .logo span{color:var(--primary)}
-.navbar nav{display:flex; align-items:center; gap:16px}
-.navbar a{color:var(--muted); text-decoration:none; padding:.4rem .6rem; border-radius:10px}
-.navbar a:hover{color:var(--text); background:var(--panel); border:1px solid var(--border)}
+.navlinks{display:flex; align-items:center; gap:16px}
+.navlinks a{
+  color:var(--muted); text-decoration:none; padding:.45rem .6rem; border-radius:10px;
+  transition:color .2s ease, background .2s ease, border-color .2s ease;
+}
+.navlinks a:hover{color:var(--text); background:var(--panel); border:1px solid var(--border)}
 .btn-icon{
   display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border);
   background:var(--panel); color:var(--text); border-radius:12px; padding:.45rem .6rem; cursor:pointer;
@@ -61,10 +76,10 @@ body{
 [data-theme="light"] .btn-icon .sun{display:inline}
 [data-theme="light"] .btn-icon .moon{display:none}
 
-/* Hero */
-.viewport{min-height:86vh; display:grid; place-items:center; padding:80px 16px}
-.hero-inner{max-width:1000px; text-align:center}
-.title{font-size:clamp(1.8rem, 3.5vw, 3rem); line-height:1.25; margin:16px 0 8px}
+/* HERO */
+.viewport{min-height:88vh; display:grid; place-items:center; padding:84px 16px}
+.hero-inner{max-width:1100px; text-align:center}
+.title{font-size:clamp(1.9rem,3.5vw,3.2rem); line-height:1.25; margin:16px 0 10px}
 .title b{color:var(--primary)}
 .title .neon{
   display:block;
@@ -72,10 +87,11 @@ body{
   -webkit-background-clip:text; background-clip:text; color:transparent;
   background-size:300% 100%; animation:gradient 9s linear infinite;
 }
-.lead{color:var(--muted); max-width:800px; margin:0 auto 18px}
+.lead{color:var(--muted); max-width:820px; margin:0 auto 18px}
 .cta-row{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin:18px 0 28px}
-
-.btn{border-radius:14px; padding:.8rem 1.1rem; text-decoration:none; font-weight:700; letter-spacing:.2px}
+.btn{
+  border-radius:14px; padding:.85rem 1.1rem; text-decoration:none; font-weight:800; letter-spacing:.2px
+}
 .btn-ghost{border:1px solid var(--border); color:var(--text); background:transparent}
 .btn-primary{
   color:#061217; background:linear-gradient(90deg, var(--primary), var(--accent));
@@ -87,67 +103,74 @@ body{
 .magnet::after{
   content:""; position:absolute; inset:auto -20% -120% -20%;
   height:200%; background:radial-gradient(120px 60px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.5), transparent 60%);
-  transition:opacity .15s; opacity:.0; pointer-events:none;
+  transition:opacity .15s; opacity:0; pointer-events:none;
 }
 .magnet:hover::after{opacity:.5}
 
 .hero-stats{display:flex; justify-content:center; gap:12px; flex-wrap:wrap}
-.stat{
-  display:grid; place-items:center; width:140px; height:100px;
-}
-.stat span{font-size:1.6rem; font-weight:800}
+.stat{display:grid; place-items:center; width:150px; height:100px; box-shadow:var(--shadow)}
+.stat span{font-size:1.7rem; font-weight:900}
 .stat small{color:var(--muted); margin-top:-8px}
 
-/* Section */
-.section{max-width:1100px; margin:80px auto; padding:28px 18px}
-.section h2{margin:0 0 12px; font-size:1.8rem}
-.section p{color:var(--muted)}
-
-/* Chips */
-.chip-grid{list-style:none; display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:16px 0 0}
-.chip{
-  padding:.55rem .8rem; border-radius:999px; background:var(--panel);
-  border:1px solid var(--border); color:var(--text); font-weight:600
+.scroll-indicator{
+  border:none; background:transparent; color:var(--muted); margin-top:18px;
+  animation:bob 1.8s ease-in-out infinite; cursor:default
 }
 
-/* Project filters */
+/* SECTION */
+.section{max-width:1100px; margin:86px auto; padding:28px 18px}
+.section h2{margin:0 0 12px; font-size:1.85rem}
+.section p{color:var(--muted)}
+.reveal{opacity:0; transform:translateY(24px)}
+
+/* CHIPS */
+.chip-grid{list-style:none; display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:16px 0 0}
+.chip{
+  padding:.6rem .85rem; border-radius:999px; background:var(--panel);
+  border:1px solid var(--border); color:var(--text); font-weight:700
+}
+
+/* FILTERS + GRID */
 .section-head{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px}
 .filters{display:flex; gap:8px}
 .filter{
   border:1px solid var(--border); background:var(--panel); color:var(--muted);
-  padding:.5rem .8rem; border-radius:10px; cursor:pointer; font-weight:700
+  padding:.55rem .85rem; border-radius:10px; cursor:pointer; font-weight:800
 }
 .filter.active, .filter:hover{color:var(--text); border-color:var(--primary)}
 
-/* Cards */
 .grid{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); margin-top:16px}
 .card{
   overflow:hidden; border-radius:16px; border:1px solid var(--border); background:var(--panel);
-  transition:transform .3s ease, box-shadow .3s ease;
+  transition:transform .3s ease, box-shadow .3s ease; box-shadow:var(--shadow)
 }
-.card img{width:100%; height:180px; object-fit:cover; display:block; filter:saturate(1.1) contrast(1.05)}
+.card img{width:100%; height:180px; object-fit:cover; display:block; filter:saturate(1.08) contrast(1.05)}
 .card-body{padding:14px}
 .card h3{margin:4px 0 8px}
 .card p{color:var(--muted); margin:0 0 10px}
-.t
+.tags{display:flex; gap:6px; flex-wrap:wrap}
+.tags span{
+  font-size:.78rem; border:1px solid var(--border); background:rgba(255,255,255,.04);
+  padding:.25rem .45rem; border-radius:8px
+}
+.card:hover{transform:translateY(-4px) scale(1.01)}
 
-#hero::before{
-  content:""; position:absolute; inset:0;
-  background:radial-gradient(800px 400px at 70% 0, rgba(255,61,179,.15), transparent);
-  z-index:-1; transform:translateY(var(--scrollY,0));
-  transition:transform .2s linear;
+/* FOOTER */
+.footer{margin:60px 12px 18px; padding:14px 18px; text-align:center; color:var(--muted)}
+
+/* ANIMATIONS */
+@keyframes gradient{
+  0%{background-position:0% 50%}
+  100%{background-position:200% 50%}
+}
+@keyframes bob{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(6px)}
 }
 
-#cursor{
-  position:fixed; width:12px; height:12px;
-  background:var(--primary); border-radius:50%; pointer-events:none;
-  transform:translate(-50%,-50%); z-index:999;
-  box-shadow:0 0 12px var(--primary),0 0 24px var(--accent);
-  mix-blend-mode:exclusion;
-}
-.cursor-dot{
-  position:fixed; width:8px; height:8px;
-  background:var(--accent); border-radius:50%; pointer-events:none;
-  transform:translate(-50%,-50%); z-index:998; opacity:.25;
-  filter:blur(3px); transition:all .15s ease;
+/* RESPONSIVE */
+@media (max-width:720px){
+  .navlinks a{display:none}
+  .navbar{padding:8px 12px}
+  .hero-stats{gap:8px}
 }
