@@ -98,4 +98,50 @@ const nebulaMat = new THREE.PointsMaterial({ size: 0.02, vertexColors: true, tra
 const cols = []; const pos = nebulaGeo.attributes.position;
 for (let i = 0; i < pos.count; i++) {
   // cool gradient mix
-  const t = i/pos.c
+  const t = i/pos.count;
+  const r = 0.2 + 0.8 * Math.abs(Math.sin(t * Math.PI));
+  const g = 0.2 + 0.8 * Math.abs(Math.sin((t + 0.33) * Math.PI));
+  const b = 0.2 + 0.8 * Math.abs(Math.sin((t + 0.66) * Math.PI));
+  cols.push(r, g, b);
+}
+nebulaGeo.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+const nebula = new THREE.Points(nebulaGeo, nebulaMat);
+scene.add(nebula);
+
+// Starfield
+const starGeo = new THREE.BufferGeometry();
+const starCount = 900;
+const starPos = new Float32Array(starCount * 3);
+for (let i = 0; i < starCount * 3; i++) starPos[i] = (Math.random() - 0.5) * 40;
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.012, transparent: true, opacity: .65 }));
+scene.add(stars);
+
+// Parallax with mouse
+let targetX = 0, targetY = 0;
+addEventListener('mousemove', (e)=>{
+  const x = (e.clientX / innerWidth - .5) * 2;
+  const y = (e.clientY / innerHeight - .5) * 2;
+  targetX = x; targetY = y;
+});
+
+// Animate loop
+function tick(){
+  requestAnimationFrame(tick);
+  nebula.rotation.y += 0.0018;
+  nebula.rotation.x += 0.0009;
+  stars.rotation.y += 0.0006;
+
+  camera.position.x += (targetX - camera.position.x) * 0.03;
+  camera.position.y += (-targetY - camera.position.y) * 0.03;
+  camera.lookAt(0,0,0);
+
+  renderer.render(scene, camera);
+}
+tick();
+
+/***** ACCESSIBILITY / SMALL UX *****/
+// Scroll indicator scrolls to About
+document.querySelector('.scroll-indicator')?.addEventListener('click', () => {
+  document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
+});
