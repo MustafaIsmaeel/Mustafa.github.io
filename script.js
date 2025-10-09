@@ -55,153 +55,6 @@ filters.forEach(f => f.addEventListener('click', () => {
   });
 }));
 
-/***** GSAP + SplitType: HERO ENTRY *****/
-gsap.registerPlugin(ScrollTrigger);
-new window.SplitType('.title-line', { types: 'chars,words' });
-gsap.from('.hero-photo', { scale: 0, opacity: 0, duration: 1.1, ease: 'back.out(1.8)' });
-gsap.from('.char', {
-  y: 80, rotateX: -90, opacity: 0, duration: 1.1, stagger: 0.02, ease: 'back.out(1.7)', delay: 0.1
-});
-gsap.from('.lead', { opacity: 0, y: 30, duration: 0.6, delay: 0.35 });
-gsap.from('.cta-row .btn', { opacity: 0, y: 24, stagger: 0.08, duration: 0.5, delay: 0.45 });
-gsap.from('.stat', { opacity: 0, scale: 0.85, duration: 0.7, stagger: 0.08, ease: 'power2.out', delay: 0.6 });
-
-/***** SECTION REVEALS *****/
-gsap.utils.toArray('.reveal').forEach(el => {
-  gsap.to(el, {
-    opacity: 1, y: 0, duration: .8, ease: 'power3.out',
-    scrollTrigger: { trigger: el, start: 'top 85%' }
-  });
-});
-
-/***** NAV DARKEN ON SCROLL *****/
-const nav = document.querySelector('.navbar');
-window.addEventListener('scroll', () => {
-  const op = Math.min(0.9, 0.25 + window.scrollY / 500);
-  nav.style.background = `rgba(0,0,0,${op})`;
-});
-
-/***** Lenis Smooth Scroll *****/
-const lenis = new Lenis({ smoothWheel: true, wheelMultiplier: 1.1 });
-function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
-requestAnimationFrame(raf);
-
-/***** THREE.JS — ANIMATED SHADER BACKGROUND (nebula-ish) *****/
-const canvas = document.getElementById('bg');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-const scene = new THREE.Scene();
-const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-// Fullscreen quad
-const geo = new THREE.PlaneGeometry(2, 2);
-
-// Simple GLSL for moving gradient noise (fast & pretty)
-const frag = `
-precision highp float;
-uniform vec2 u_res;
-uniform float u_time;
-uniform vec2 u_mouse;
-
-float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
-float noise(in vec2 p){
-  vec2 i = floor(p); vec2 f = fract(p);
-  vec2 u = f*f*(3.0-2.0*f);
-  return mix(mix(hash(i + vec2(0.0,0.0)), hash(i + vec2(1.0,0.0)), u.x),
-             mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
-}
-float fbm(vec2 p){
-  float v=0.0; float a=.5;
-  for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.1; a*=.52; }
-  return v;
-}
-
-void main(){
-  vec2 uv = gl_FragCoord.xy / u_res.xy;
-  vec2 p = (uv - .5) * vec2(u_res.x/u_res.y, 1.0);
-
-  // mouse parallax
-  vec2 m = (u_mouse / u_res - .5) * 0.8;
-
-  float t = u_time * .07;
-  float n = fbm(3.0*p + vec2(t, -t) + m*2.0);
-
-  vec3 col1 = vec3(0.0, 0.91, 1.0); // primary
-  vec3 col2 = vec3(1.0, 0.24, 0.70); // accent
-  vec3 col = mix(col1, col2, smoothstep(0.3, 0.8, n));
-
-  // subtle vignette
-  float v = smoothstep(1.0, 0.2, length(p));
-  col *= v;
-
-  gl_FragColor = vec4(col, 1.0);
-}
-`;
-const vert = `
-void main(){ gl_Position = vec4(position, 1.0); }
-`;
-
-const uniforms = {
-  u_res:   { value: new THREE.Vector2(1,1) },
-  u_time:  { value: 0 },
-  u_mouse: { value: new THREE.Vector2(-1000,-1000) }
-};
-
-const mat = new THREE.ShaderMaterial({
-  uniforms, vertexShader: vert, fragmentShader: frag
-});
-const mesh = new THREE.Mesh(geo, mat);
-scene.add(mesh);
-
-function onResize(){
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  renderer.setPixelRatio(dpr);
-  renderer.setSize(innerWidth, innerHeight);
-  uniforms.u_res.value.set(innerWidth * dpr, innerHeight * dpr);
-}
-addEventListener('resize', onResize); onResize();
-
-addEventListener('mousemove', (e)=>{
-  uniforms.u_mouse.value.set(e.clientX, innerHeight - e.clientY);
-});
-
-let start = performance.now();
-function render(){
-  requestAnimationFrame(render);
-  uniforms.u_time.value = (performance.now() - start) / 1000;
-  renderer.render(scene, camera);
-}
-render();
-/***** OVERLAY FLYING PARTICLES *****/
-const pScene = new THREE.Scene();
-const pCamera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 1, 1000);
-pCamera.position.z = 400;
-
-const pGeo = new THREE.BufferGeometry();
-const pCount = 800;
-const pos = new Float32Array(pCount * 3);
-for (let i = 0; i < pCount * 3; i++) pos[i] = (Math.random() - 0.5) * 800;
-pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-const pMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.6, opacity: 0.5, transparent: true });
-const points = new THREE.Points(pGeo, pMat);
-pScene.add(points);
-
-function renderParticles() {
-  points.rotation.x += 0.0006;
-  points.rotation.y += 0.001;
-  renderer.autoClear = false;
-  renderer.clear();
-  renderer.render(scene, camera);     // shader plane
-  renderer.render(pScene, pCamera);   // particles
-  requestAnimationFrame(renderParticles);
-}
-renderParticles();
-
-/***** ACCESSIBILITY / SMALL UX *****/
-// Scroll indicator → About
-document.querySelector('.scroll-indicator')?.addEventListener('click', () => {
-  document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
-});
-
 /***** TYPEWRITER SUBTITLE *****/
 const titles = [
   "Data Engineering",
@@ -236,3 +89,136 @@ function type() {
 }
 type();
 
+/***** GSAP + SplitType: HERO ENTRY *****/
+gsap.registerPlugin(ScrollTrigger);
+new window.SplitType('.title-line', { types: 'chars,words' });
+gsap.from('.hero-photo', { scale: 0, opacity: 0, duration: 1.1, ease: 'back.out(1.8)' });
+gsap.from('.char', {
+  y: 80, rotateX: -90, opacity: 0, duration: 1.1, stagger: 0.02, ease: 'back.out(1.7)', delay: 0.1
+});
+gsap.from('.lead', { opacity: 0, y: 30, duration: 0.6, delay: 0.35 });
+gsap.from('.cta-row .btn', { opacity: 0, y: 24, stagger: 0.08, duration: 0.5, delay: 0.45 });
+gsap.from('.stat', { opacity: 0, scale: 0.85, duration: 0.7, stagger: 0.08, ease: 'power2.out', delay: 0.6 });
+
+/***** SECTION REVEALS *****/
+gsap.utils.toArray('.reveal').forEach(elm => {
+  gsap.to(elm, {
+    opacity: 1, y: 0, duration: .8, ease: 'power3.out',
+    scrollTrigger: { trigger: elm, start: 'top 85%' }
+  });
+});
+
+/***** NAV DARKEN ON SCROLL *****/
+const nav = document.querySelector('.navbar');
+window.addEventListener('scroll', () => {
+  const op = Math.min(0.9, 0.25 + window.scrollY / 500);
+  nav.style.background = `rgba(0,0,0,${op})`;
+});
+
+/***** Lenis Smooth Scroll *****/
+const lenis = new Lenis({ smoothWheel: true, wheelMultiplier: 1.1 });
+function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+requestAnimationFrame(raf);
+
+/***** THREE.JS — SHADER + FLYING PARTICLES *****/
+const canvas = document.getElementById('bg');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+const shaderScene = new THREE.Scene();
+const shaderCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+// Fullscreen quad for shader
+const quadGeo = new THREE.PlaneGeometry(2, 2);
+const frag = `
+precision highp float;
+uniform vec2 u_res;
+uniform float u_time;
+uniform vec2 u_mouse;
+
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+float noise(in vec2 p){
+  vec2 i = floor(p); vec2 f = fract(p);
+  vec2 u = f*f*(3.0-2.0*f);
+  return mix(mix(hash(i + vec2(0.0,0.0)), hash(i + vec2(1.0,0.0)), u.x),
+             mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
+}
+float fbm(vec2 p){
+  float v=0.0; float a=.5;
+  for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.1; a*=.52; }
+  return v;
+}
+void main(){
+  vec2 uv = gl_FragCoord.xy / u_res.xy;
+  vec2 p = (uv - .5) * vec2(u_res.x/u_res.y, 1.0);
+  vec2 m = (u_mouse / u_res - .5) * 0.8;
+  float t = u_time * .07;
+  float n = fbm(3.0*p + vec2(t, -t) + m*2.0);
+  vec3 col1 = vec3(0.0, 0.91, 1.0);
+  vec3 col2 = vec3(1.0, 0.24, 0.70);
+  vec3 col = mix(col1, col2, smoothstep(0.3, 0.8, n));
+  float v = smoothstep(1.0, 0.2, length(p));
+  col *= v;
+  gl_FragColor = vec4(col, 1.0);
+}`;
+const vert = `void main(){ gl_Position = vec4(position, 1.0); }`;
+
+const uniforms = {
+  u_res:   { value: new THREE.Vector2(1,1) },
+  u_time:  { value: 0 },
+  u_mouse: { value: new THREE.Vector2(-1000,-1000) }
+};
+const shaderMat = new THREE.ShaderMaterial({ uniforms, vertexShader: vert, fragmentShader: frag });
+shaderScene.add(new THREE.Mesh(quadGeo, shaderMat));
+
+// Particles overlay scene
+const pScene = new THREE.Scene();
+const pCam = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 1, 1000);
+pCam.position.z = 400;
+
+const pGeo = new THREE.BufferGeometry();
+const pCount = 1000; // keep performant
+const pPos = new Float32Array(pCount * 3);
+for (let i = 0; i < pCount * 3; i++) pPos[i] = (Math.random() - 0.5) * 900;
+pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+const pMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.4, opacity: 0.5, transparent: true });
+const points = new THREE.Points(pGeo, pMat);
+pScene.add(points);
+
+// Resize handling
+function onResize(){
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  renderer.setPixelRatio(dpr);
+  renderer.setSize(innerWidth, innerHeight);
+  uniforms.u_res.value.set(innerWidth * dpr, innerHeight * dpr);
+
+  pCam.aspect = innerWidth/innerHeight;
+  pCam.updateProjectionMatrix();
+}
+addEventListener('resize', onResize); onResize();
+
+// Mouse for shader parallax
+addEventListener('mousemove', (e)=>{
+  uniforms.u_mouse.value.set(e.clientX, innerHeight - e.clientY);
+});
+
+// Render loop (shader first, then particles)
+let start = performance.now();
+function render(){
+  requestAnimationFrame(render);
+  uniforms.u_time.value = (performance.now() - start) / 1000;
+
+  // gentle particle rotation for "flying" feel
+  points.rotation.x += 0.0006;
+  points.rotation.y += 0.001;
+
+  renderer.autoClear = true;
+  renderer.render(shaderScene, shaderCam); // shader plane
+  renderer.autoClear = false;
+  renderer.render(pScene, pCam);           // particles overlay
+}
+render();
+
+/***** ACCESSIBILITY / SMALL UX *****/
+// Scroll indicator → About
+document.querySelector('.scroll-indicator')?.addEventListener('click', () => {
+  document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
+});
