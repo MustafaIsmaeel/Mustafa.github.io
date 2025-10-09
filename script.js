@@ -12,10 +12,15 @@ themeToggle.addEventListener('click', () => {
   localStorage.setItem('theme', next);
 });
 
-/***** CURSOR AURA *****/
+/***** CURSOR AURA + TRAIL *****/
 const cursor = document.getElementById('cursor');
+const trail = document.getElementById('trail');
+let cx = -100, cy = -100;
 window.addEventListener('mousemove', e => {
-  gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.12, ease: 'power3.out' });
+  cx = e.clientX; cy = e.clientY;
+  gsap.to(cursor, { x: cx, y: cy, duration: 0.12, ease: 'power3.out' });
+  trail.style.setProperty('--tx', cx + 'px');
+  trail.style.setProperty('--ty', cy + 'px');
 });
 
 /***** MAGNETIC BUTTON HOVER *****/
@@ -29,10 +34,10 @@ document.querySelectorAll('.magnet').forEach(btn => {
   });
 });
 
-/***** VANILLA TILT (3D tilt on cards/chips/stats) *****/
+/***** VANILLA TILT (3D tilt on cards/chips/stats & portrait) *****/
 const tiltEls = document.querySelectorAll('.tilt, .card, .chip');
 if (tiltEls.length) {
-  VanillaTilt.init(tiltEls, { max: 8, speed: 600, glare: true, 'max-glare': 0.18, gyroscope: true });
+  VanillaTilt.init(tiltEls, { max: 10, speed: 700, glare: true, 'max-glare': 0.18, gyroscope: true });
 }
 
 /***** PROJECT FILTERS *****/
@@ -52,11 +57,14 @@ filters.forEach(f => f.addEventListener('click', () => {
 
 /***** GSAP + SplitType: HERO ENTRY *****/
 gsap.registerPlugin(ScrollTrigger);
-const st1 = new window.SplitType('.title-line', { types: 'chars' });
+new window.SplitType('.title-line', { types: 'chars,words' });
+gsap.from('.hero-photo', { scale: 0, opacity: 0, duration: 1.1, ease: 'back.out(1.8)' });
 gsap.from('.char', {
-  y: 100, rotateX: -90, opacity: 0, duration: 1.2, stagger: 0.02, ease: 'back.out(1.7)', delay: 0.1
+  y: 80, rotateX: -90, opacity: 0, duration: 1.1, stagger: 0.02, ease: 'back.out(1.7)', delay: 0.1
 });
-gsap.from('.stat', { opacity: 0, scale: 0.8, duration: 0.8, stagger: 0.08, ease: 'power2.out', delay: 0.6 });
+gsap.from('.lead', { opacity: 0, y: 30, duration: 0.6, delay: 0.35 });
+gsap.from('.cta-row .btn', { opacity: 0, y: 24, stagger: 0.08, duration: 0.5, delay: 0.45 });
+gsap.from('.stat', { opacity: 0, scale: 0.85, duration: 0.7, stagger: 0.08, ease: 'power2.out', delay: 0.6 });
 
 /***** SECTION REVEALS *****/
 gsap.utils.toArray('.reveal').forEach(el => {
@@ -78,70 +86,94 @@ const lenis = new Lenis({ smoothWheel: true, wheelMultiplier: 1.1 });
 function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
 requestAnimationFrame(raf);
 
-/***** THREE.JS — NEBULA + STARS *****/
-const canvas = document.getElementById('scene');
+/***** THREE.JS — ANIMATED SHADER BACKGROUND (nebula-ish) *****/
+const canvas = document.getElementById('bg');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
-camera.position.set(0, 0, 6);
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+// Fullscreen quad
+const geo = new THREE.PlaneGeometry(2, 2);
+
+// Simple GLSL for moving gradient noise (fast & pretty)
+const frag = `
+precision highp float;
+uniform vec2 u_res;
+uniform float u_time;
+uniform vec2 u_mouse;
+
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+float noise(in vec2 p){
+  vec2 i = floor(p); vec2 f = fract(p);
+  vec2 u = f*f*(3.0-2.0*f);
+  return mix(mix(hash(i + vec2(0.0,0.0)), hash(i + vec2(1.0,0.0)), u.x),
+             mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
+}
+float fbm(vec2 p){
+  float v=0.0; float a=.5;
+  for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.1; a*=.52; }
+  return v;
+}
+
+void main(){
+  vec2 uv = gl_FragCoord.xy / u_res.xy;
+  vec2 p = (uv - .5) * vec2(u_res.x/u_res.y, 1.0);
+
+  // mouse parallax
+  vec2 m = (u_mouse / u_res - .5) * 0.8;
+
+  float t = u_time * .07;
+  float n = fbm(3.0*p + vec2(t, -t) + m*2.0);
+
+  vec3 col1 = vec3(0.0, 0.91, 1.0); // primary
+  vec3 col2 = vec3(1.0, 0.24, 0.70); // accent
+  vec3 col = mix(col1, col2, smoothstep(0.3, 0.8, n));
+
+  // subtle vignette
+  float v = smoothstep(1.0, 0.2, length(p));
+  col *= v;
+
+  gl_FragColor = vec4(col, 1.0);
+}
+`;
+const vert = `
+void main(){ gl_Position = vec4(position, 1.0); }
+`;
+
+const uniforms = {
+  u_res:   { value: new THREE.Vector2(1,1) },
+  u_time:  { value: 0 },
+  u_mouse: { value: new THREE.Vector2(-1000,-1000) }
+};
+
+const mat = new THREE.ShaderMaterial({
+  uniforms, vertexShader: vert, fragmentShader: frag
+});
+const mesh = new THREE.Mesh(geo, mat);
+scene.add(mesh);
 
 function onResize(){
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  renderer.setPixelRatio(dpr);
   renderer.setSize(innerWidth, innerHeight);
-  camera.aspect = innerWidth/innerHeight;
-  camera.updateProjectionMatrix();
+  uniforms.u_res.value.set(innerWidth * dpr, innerHeight * dpr);
 }
 addEventListener('resize', onResize); onResize();
 
-// Nebula points (colored sphere)
-const nebulaGeo = new THREE.SphereGeometry(4, 64, 64);
-const nebulaMat = new THREE.PointsMaterial({ size: 0.02, vertexColors: true, transparent: true, opacity: 0.9 });
-const cols = []; const pos = nebulaGeo.attributes.position;
-for (let i = 0; i < pos.count; i++) {
-  // cool gradient mix
-  const t = i/pos.count;
-  const r = 0.2 + 0.8 * Math.abs(Math.sin(t * Math.PI));
-  const g = 0.2 + 0.8 * Math.abs(Math.sin((t + 0.33) * Math.PI));
-  const b = 0.2 + 0.8 * Math.abs(Math.sin((t + 0.66) * Math.PI));
-  cols.push(r, g, b);
-}
-nebulaGeo.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
-const nebula = new THREE.Points(nebulaGeo, nebulaMat);
-scene.add(nebula);
-
-// Starfield
-const starGeo = new THREE.BufferGeometry();
-const starCount = 900;
-const starPos = new Float32Array(starCount * 3);
-for (let i = 0; i < starCount * 3; i++) starPos[i] = (Math.random() - 0.5) * 40;
-starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.012, transparent: true, opacity: .65 }));
-scene.add(stars);
-
-// Parallax with mouse
-let targetX = 0, targetY = 0;
 addEventListener('mousemove', (e)=>{
-  const x = (e.clientX / innerWidth - .5) * 2;
-  const y = (e.clientY / innerHeight - .5) * 2;
-  targetX = x; targetY = y;
+  uniforms.u_mouse.value.set(e.clientX, innerHeight - e.clientY);
 });
 
-// Animate loop
-function tick(){
-  requestAnimationFrame(tick);
-  nebula.rotation.y += 0.0018;
-  nebula.rotation.x += 0.0009;
-  stars.rotation.y += 0.0006;
-
-  camera.position.x += (targetX - camera.position.x) * 0.03;
-  camera.position.y += (-targetY - camera.position.y) * 0.03;
-  camera.lookAt(0,0,0);
-
+let start = performance.now();
+function render(){
+  requestAnimationFrame(render);
+  uniforms.u_time.value = (performance.now() - start) / 1000;
   renderer.render(scene, camera);
 }
-tick();
+render();
 
 /***** ACCESSIBILITY / SMALL UX *****/
-// Scroll indicator scrolls to About
+// Scroll indicator → About
 document.querySelector('.scroll-indicator')?.addEventListener('click', () => {
   document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
 });
