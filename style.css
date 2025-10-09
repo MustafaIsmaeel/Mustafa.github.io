@@ -1,4 +1,4 @@
-/* THEME TOKENS (use html[...] specificity for reliability) */
+/* Stable variables on <html> so theme toggle is reliable */
 html{
   --bg:#070b12;
   --panel:rgba(255,255,255,.06);
@@ -36,7 +36,7 @@ body{
   overflow-x:hidden;
 }
 
-/* 3D background canvas */
+/* 3D background canvas behind everything */
 #bg{position:fixed; inset:0; z-index:-10; display:block}
 
 /* Cursor aura + trailing radial trail */
@@ -48,8 +48,8 @@ body{
 }
 #trail{
   position:fixed; inset:0; z-index:-8; pointer-events:none;
-  background:radial-gradient(circle at var(--tx, -100px) var(--ty, -100px), rgba(255,61,179,.15), transparent 40%),
-              radial-gradient(circle at calc(var(--tx, -100px) - 80px) calc(var(--ty, -100px) + 60px), rgba(0,231,255,.12), transparent 45%);
+  background:radial-gradient(circle at var(--tx, -100px) var(--ty, -100px), rgba(255,61,179,.14), transparent 42%),
+              radial-gradient(circle at calc(var(--tx, -100px) - 80px) calc(var(--ty, -100px) + 60px), rgba(0,231,255,.12), transparent 48%);
   transition:background-position .12s ease;
 }
 
@@ -89,7 +89,7 @@ body{
 html[data-theme="light"] .btn-icon .sun{display:inline}
 html[data-theme="light"] .btn-icon .moon{display:none}
 
-/* Ensure content above background */
+/* Make sure all content sits above the canvas */
 .section, .card, .hero-inner, .navbar, footer, .resume-modal { position:relative; z-index:5; }
 
 /* HERO */
@@ -111,24 +111,25 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 .ring{
   position:absolute; border-radius:50%; pointer-events:none;
   border:1px dashed var(--ring); mix-blend-mode:screen;
-  animation:spin 12s linear infinite;
+  animation:spin 16s linear infinite;
 }
-.ring1{width:240px; height:240px; animation-duration:18s}
-.ring2{width:280px; height:280px; animation-direction:reverse; animation-duration:24s}
+.ring1{width:240px; height:240px}
+.ring2{width:280px; height:280px; animation-direction:reverse; animation-duration:22s}
 
 .title{font-size:clamp(2rem,3.8vw,3.4rem); line-height:1.2; margin:10px 0 10px}
 .title b{color:var(--primary)}
 
-/* TYPEWRITER SUBTITLE */
+/* TYPEWRITER SUBTITLE — visible by default */
 .typed-line{font-size:1.4rem; color:var(--accent); margin:.6rem 0 0; font-weight:800; min-height:2rem}
 .cursor-blink{display:inline-block; animation:blink 1s step-start infinite}
 @keyframes blink{50%{opacity:0}}
 
 .lead{color:var(--muted); max-width:860px; margin:10px auto 18px}
 
+/* Buttons + ripple */
 .cta-row{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin:18px 0 28px}
 .btn{
-  border-radius:14px; padding:.9rem 1.15rem; text-decoration:none; font-weight:900; letter-spacing:.2px
+  position:relative; border-radius:14px; padding:.9rem 1.15rem; text-decoration:none; font-weight:900; letter-spacing:.2px; overflow:hidden
 }
 .btn-ghost{border:1px solid var(--border); color:var(--text); background:transparent}
 .btn-primary{
@@ -137,13 +138,20 @@ html[data-theme="light"] .btn-icon .moon{display:none}
   transition:transform .2s ease, box-shadow .2s ease;
 }
 .btn-primary:hover{transform:translateY(-2px); box-shadow:0 14px 34px -12px rgba(0,231,255,.6)}
-.magnet{position:relative; overflow:hidden}
-.magnet::after{
-  content:""; position:absolute; inset:auto -20% -120% -20%;
-  height:200%; background:radial-gradient(140px 70px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.5), transparent 60%);
-  transition:opacity .15s; opacity:0; pointer-events:none;
+.ripple::after{
+  content:""; position:absolute; border-radius:50%; transform:translate(-50%,-50%) scale(0);
+  background:rgba(255,255,255,.4); width:10px; height:10px; pointer-events:none; opacity:0;
 }
-.magnet:hover::after{opacity:.5}
+.ripple:active::after{
+  left:var(--mx); top:var(--my); animation:ripple .6s ease-out; opacity:1;
+}
+@keyframes ripple{to{transform:translate(-50%,-50%) scale(25); opacity:0}}
+
+.magnet{position:relative}
+.magnet::before{
+  content:""; position:absolute; inset:-20%; background:radial-gradient(160px 80px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.15), transparent 60%); opacity:0; transition:opacity .15s
+}
+.magnet:hover::before{opacity:.6}
 
 .hero-stats{display:flex; justify-content:center; gap:12px; flex-wrap:wrap}
 .stat{display:grid; place-items:center; width:160px; height:110px; box-shadow:var(--shadow)}
@@ -159,16 +167,15 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 .ticker{overflow:hidden; margin-top:26px}
 .ticker .track{
   display:inline-block; white-space:nowrap; animation:marquee 18s linear infinite;
-  color:var(--muted); opacity:.85;
+  color:var(--muted); opacity:.9;
 }
 .ticker span{margin:0 18px}
 @keyframes marquee{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-50%,0,0)}}
 
-/* SECTIONS */
+/* SECTIONS (VISIBLE BY DEFAULT – no hidden opacity) */
 .section{max-width:1150px; margin:96px auto; padding:30px 18px}
 .section h2{margin:0 0 12px; font-size:1.95rem}
 .section p{color:var(--muted)}
-.reveal{opacity:0; transform:translateY(26px)}
 
 /* TIMELINE */
 .timeline{display:grid; gap:14px; margin-top:10px}
@@ -207,7 +214,7 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 }
 .card:hover{transform:translateY(-4px) scale(1.01)}
 
-/* Card shine effect */
+/* Card shine */
 .shine::before{
   content:""; position:absolute; inset:-200% -50% auto -50%;
   height:200%; transform:rotate(20deg);
