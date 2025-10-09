@@ -201,3 +201,17 @@ body{
   .navbar{padding:8px 12px}
   .hero-stats{gap:8px}
 }
+
+.typed-line{
+  font-size:1.4rem;
+  color:var(--accent);
+  margin-top:.6rem;
+  font-weight:700;
+  min-height:2rem;
+}
+.cursor-blink{
+  display:inline-block;
+  animation:blink 1s step-start infinite;
+}
+@keyframes blink{50%{opacity:0}}
+
