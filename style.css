@@ -131,6 +131,12 @@ body{
 .card p{color:var(--muted); margin:0 0 10px}
 .t
 
+#hero::before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(800px 400px at 70% 0, rgba(255,61,179,.15), transparent);
+  z-index:-1; transform:translateY(var(--scrollY,0));
+  transition:transform .2s linear;
+}
 
 #cursor{
   position:fixed; width:12px; height:12px;
