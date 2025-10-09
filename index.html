@@ -8,10 +8,9 @@
   <link rel="icon" href="assets/mustafa.jpg" type="image/jpeg" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="style.css" />
-  <!-- Motion & 3D libs -->
+  <!-- Motion & 3D libs (defer so DOMContentLoaded still fires after they load) -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/split-type@0.3.3/umd/index.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.26/dist/lenis.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r155/three.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
@@ -58,7 +57,7 @@
         </h1>
       </div>
 
-      <!-- TYPEWRITER SUBTITLE -->
+      <!-- TYPEWRITER SUBTITLE (no library) -->
       <p class="typed-line">
         <span id="typed"></span><span class="cursor-blink">|</span>
       </p>
@@ -68,9 +67,9 @@
       </p>
 
       <div class="cta-row">
-        <a href="#projects" class="btn btn-primary magnet">Explore Work</a>
-        <a href="#contact" class="btn btn-ghost">Contact</a>
-        <button class="btn btn-ghost" id="openResume">View Résumé</button>
+        <a href="#projects" class="btn btn-primary magnet ripple">Explore Work</a>
+        <a href="#contact" class="btn btn-ghost ripple">Contact</a>
+        <button class="btn btn-ghost ripple" id="openResume">View Résumé</button>
       </div>
 
       <div class="hero-stats">
@@ -177,7 +176,7 @@
         <img src="assets/project2.jpg" alt="ETL automation pipeline preview" />
         <div class="card-body">
           <h3>ETL Automation Pipeline</h3>
-          <p>Python pipeline merging Banner + Blue with validation, dedupe, data quality checks, and scheduled exports.</p>
+          <p>Python pipeline merging Banner + Blue with validation, dedupe, quality checks, and scheduled exports.</p>
           <div class="tags"><span>Python</span><span>pandas</span><span>Scheduling</span></div>
         </div>
       </article>
@@ -210,7 +209,7 @@
         <summary><b>Boosting SOQ Response Rates</b> — division dashboards & nudges</summary>
         <div class="case-body">
           <p><b>Context:</b> SOQ participation varied by modality and part-of-term.</p>
-          <p><b>Solution:</b> Built response dashboards with slicers for division/department/instructor; added automated reminder copy with deep links.</p>
+          <p><b>Solution:</b> Response dashboards with slicers: division/department/instructor; automated reminders with deep links.</p>
           <p><b>Impact:</b> +12–18% response rate in targeted cohorts; faster end-of-term insights for deans.</p>
         </div>
       </details>
@@ -218,8 +217,8 @@
         <summary><b>Canvas → Analytics</b> — nightly sync + warehouse schema</summary>
         <div class="case-body">
           <p><b>Context:</b> Multiple systems tracked courses and instructors differently.</p>
-          <p><b>Solution:</b> Python/REST sync process normalizing IDs and roles, writing canonical tables.</p>
-          <p><b>Impact:</b> Reliable single-source-of-truth for downstream dashboards & audits.</p>
+          <p><b>Solution:</b> Python/REST sync normalizing IDs & roles; canonical tables for downstream BI.</p>
+          <p><b>Impact:</b> Reliable single-source-of-truth for dashboards & audits.</p>
         </div>
       </details>
     </div>
@@ -256,9 +255,9 @@
     <h2>Let’s Connect</h2>
     <p>Have a role or idea? I’m open to collaborations and interesting problems.</p>
     <div class="cta-row">
-      <a class="btn btn-primary magnet" href="mailto:malsaegh1@gmail.com">Email Me</a>
-      <a class="btn btn-ghost" target="_blank" href="https://linkedin.com/in/mustafa-alsaegh">LinkedIn</a>
-      <a class="btn btn-ghost" target="_blank" href="https://github.com/mustafa">GitHub</a>
+      <a class="btn btn-primary magnet ripple" href="mailto:malsaegh1@gmail.com">Email Me</a>
+      <a class="btn btn-ghost ripple" target="_blank" href="https://linkedin.com/in/mustafa-alsaegh">LinkedIn</a>
+      <a class="btn btn-ghost ripple" target="_blank" href="https://github.com/mustafa">GitHub</a>
     </div>
   </section>
 
@@ -270,11 +269,11 @@
   <dialog id="resumeModal" class="resume-modal glass">
     <div class="resume-head">
       <h3>Résumé — PDF Preview</h3>
-      <button id="closeResume" class="btn btn-ghost">Close</button>
+      <button id="closeResume" class="btn btn-ghost ripple">Close</button>
     </div>
     <iframe id="resumeFrame" src="assets/resume.pdf" title="Resume PDF" loading="lazy"></iframe>
     <div class="resume-actions">
-      <a class="btn btn-primary" href="assets/resume.pdf" download>Download PDF</a>
+      <a class="btn btn-primary ripple" href="assets/resume.pdf" download>Download PDF</a>
     </div>
   </dialog>
 
