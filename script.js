@@ -122,3 +122,21 @@ function tick(){
   renderer.render(scene, camera);
 }
 tick();
+// --- Neon Cursor Trail ---
+const cursor = document.createElement('div');
+cursor.id = 'cursor';
+document.body.appendChild(cursor);
+const trail = [];
+for (let i=0;i<15;i++){
+  const dot=document.createElement('div');
+  dot.className='cursor-dot';
+  document.body.appendChild(dot);
+  trail.push(dot);
+}
+document.addEventListener('mousemove', e=>{
+  cursor.style.left = e.clientX+'px';
+  cursor.style.top  = e.clientY+'px';
+  trail.forEach((d,i)=>{
+    setTimeout(()=>{d.style.left=e.clientX+'px'; d.style.top=e.clientY+'px';}, i*25);
+  });
+});
