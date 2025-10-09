@@ -1,13 +1,15 @@
-/* THEME TOKENS (on <html> so toggle is reliable) */
+/* THEME TOKENS */
 html{
   --bg:#070b12; --panel:rgba(255,255,255,.06); --border:rgba(255,255,255,.14);
   --text:#eaf1fb; --muted:#a5b2c7; --primary:#00e7ff; --accent:#ff3db3;
   --ring:rgba(0,231,255,.5); --shadow:0 18px 48px -18px rgba(0,0,0,.55);
+  --beam: linear-gradient(90deg, rgba(0,231,255,.28), rgba(255,61,179,.28));
 }
 html[data-theme="light"]{
   --bg:#f7f9fc; --panel:rgba(0,0,0,.04); --border:rgba(0,0,0,.12);
   --text:#0c1220; --muted:#4c5a70; --primary:#006eff; --accent:#ff2e7a;
   --ring:rgba(0,110,255,.25); --shadow:0 18px 48px -18px rgba(0,0,0,.18);
+  --beam: linear-gradient(90deg, rgba(0,110,255,.25), rgba(255,46,122,.25));
 }
 
 /* BASE */
@@ -23,10 +25,17 @@ body{
   overflow-x:hidden;
 }
 
-/* Background canvas deep behind everything */
+/* Scroll progress bar */
+#scrollbar{
+  position:fixed; top:0; left:0; height:3px; width:0%;
+  background:linear-gradient(90deg, var(--primary), var(--accent));
+  z-index:1000; box-shadow:0 0 16px rgba(0,231,255,.6);
+}
+
+/* Background canvas */
 #bg{position:fixed; inset:0; z-index:-999; display:block}
 
-/* Cursor aura + trailing gradient trail */
+/* Cursor + trail + beam + orbs */
 #cursor{
   position:fixed; width:36px; height:36px; border-radius:50%;
   background:radial-gradient(circle at 30% 30%, var(--accent), transparent 60%);
@@ -40,6 +49,19 @@ body{
     radial-gradient(circle at calc(var(--tx,-100px) - 80px) calc(var(--ty,-100px) + 60px), rgba(0,231,255,.12), transparent 45%);
   transition:background-position .12s ease;
 }
+#beam{
+  position:fixed; height:2px; width:120px; background:var(--beam);
+  border-radius:4px; filter:blur(1px); pointer-events:none; z-index:998;
+  transform-origin:left center; mix-blend-mode:screen; opacity:.6;
+}
+.orb{
+  position:fixed; width:10px; height:10px; border-radius:50%;
+  background:radial-gradient(circle, #fff, transparent 60%);
+  mix-blend-mode:screen; pointer-events:none; z-index:997; opacity:.6; filter:blur(1px);
+}
+.o1{width:12px; height:12px}
+.o2{width:8px; height:8px}
+.o3{width:10px; height:10px}
 
 /* Glass + layout */
 .glass{
@@ -70,14 +92,14 @@ body{
 html[data-theme="light"] .btn-icon .sun{display:inline}
 html[data-theme="light"] .btn-icon .moon{display:none}
 
-/* Ensure content sits above background */
+/* Ensure content highest */
 .section, .card, .hero-inner, .navbar, footer, .resume-modal { position:relative; z-index:5; }
 
 /* Hero */
 .viewport{min-height:92vh; display:grid; place-items:center; padding:90px 16px}
 .hero-inner{max-width:1200px; text-align:center}
 .hero-top{display:flex; flex-wrap:wrap; gap:20px; align-items:center; justify-content:center}
-.hero-photo{position:relative; width:260px; height:260px; display:grid; place-items:center; will-change:transform}
+.hero-photo{position:relative; width:260px; height:260px; display:grid; place-items:center}
 .hero-photo img{
   width:200px; height:200px; border-radius:50%; border:3px solid var(--primary);
   box-shadow:0 0 25px rgba(0,231,255,.45); animation:float 6s ease-in-out infinite
@@ -92,24 +114,25 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 .ring1{width:240px; height:240px; animation-duration:18s}
 .ring2{width:280px; height:280px; animation-direction:reverse; animation-duration:24s}
 
-.title{font-size:clamp(2rem,3.8vw,3.4rem); line-height:1.2; margin:10px 0 10px}
+.title{font-size:clamp(2rem,3.8vw,3.4rem); line-height:1.2; margin:10px 0 10px; position:relative}
 .title b{color:var(--primary)}
+.spark{position:absolute; left:50%; transform:translateX(-50%); width:70%; color:var(--accent); opacity:.0}
 
 /* Typewriter subtitle */
 .typed-line{font-size:1.4rem; color:var(--accent); margin:.6rem 0 0; font-weight:800; min-height:2rem}
 .cursor-blink{display:inline-block; animation:blink 1s step-start infinite}
 @keyframes blink{50%{opacity:0}}
+.lead{color:var(--muted); max-width:860px; margin:10px auto 18px}
 
-/* CTA buttons (aligned) */
+/* CTA buttons + gooey */
 .cta-row{
   display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center;
-  margin:18px 0 28px;
+  margin:18px 0 28px; filter:url(#goo);
 }
 .btn{
   display:inline-flex; align-items:center; justify-content:center;
-  min-height:48px; line-height:1;
-  border-radius:14px; padding:0 1.15rem; text-decoration:none; font-weight:900; letter-spacing:.2px;
-  position:relative; overflow:hidden;
+  min-height:48px; line-height:1; border-radius:14px; padding:0 1.15rem;
+  text-decoration:none; font-weight:900; letter-spacing:.2px; position:relative; overflow:hidden;
 }
 .btn-ghost{border:1px solid var(--border); color:var(--text); background:transparent}
 .btn-primary{
@@ -123,25 +146,38 @@ html[data-theme="light"] .btn-icon .moon{display:none}
   transition:opacity .15s; opacity:0; pointer-events:none;
 }
 .magnet:hover::after{opacity:.5}
-/* Ripple click */
 .ripple:active::before{
   content:""; position:absolute; left:50%; top:50%; width:10px; height:10px; border-radius:50%;
   transform:translate(-50%,-50%); background:rgba(255,255,255,.5); animation:ripple 600ms ease;
 }
 @keyframes ripple{to{width:240px; height:240px; opacity:0}}
-.lead{color:var(--muted); max-width:860px; margin:10px auto 18px}
 
+/* Neon animated gradient borders */
+.neon-border{
+  position:relative; isolation:isolate;
+}
+.neon-border::after{
+  content:""; position:absolute; inset:-1px; border-radius:18px; z-index:-1;
+  background:conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary));
+  filter:blur(12px); opacity:.35; animation:spin 6s linear infinite;
+}
+
+/* Stats */
 .hero-stats{display:flex; justify-content:center; gap:12px; flex-wrap:wrap}
 .stat{display:grid; place-items:center; width:160px; height:110px; box-shadow:var(--shadow)}
 .stat span{font-size:1.8rem; font-weight:900}
 .stat small{color:var(--muted); margin-top:-8px}
+.scroll-indicator{border:none; background:transparent; color:var(--muted); margin-top:18px; animation:bob 1.8s ease-in-out infinite}
 
-.scroll-indicator{border:none; background:transparent; color:var(--muted); margin-top:18px; animation:bob 1.8s ease-in-out infinite; cursor:default}
-
-/* Sections (visible even without JS) */
+/* Sections */
 .section{max-width:1150px; margin:96px auto; padding:30px 18px}
 .section h2{margin:0 0 12px; font-size:1.95rem}
 .section p{color:var(--muted)}
+.headline{position:relative; display:inline-block}
+.headline::after{
+  content:""; position:absolute; left:0; right:0; bottom:-6px; height:3px; border-radius:3px;
+  background:linear-gradient(90deg, var(--primary), var(--accent)); transform:scaleX(0); transform-origin:left;
+}
 
 /* Timeline */
 .timeline{display:grid; gap:14px; margin-top:10px}
@@ -153,7 +189,7 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 .chip-grid{list-style:none; display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:16px 0 0}
 .chip{padding:.65rem .9rem; border-radius:999px; background:var(--panel); border:1px solid var(--border); color:var(--text); font-weight:800}
 
-/* Projects grid + cards (equal-height, aligned) */
+/* Projects grid + cards (equal-height) */
 .section-head{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px}
 .filters{display:flex; gap:8px}
 .filter{border:1px solid var(--border); background:var(--panel); color:var(--muted); padding:.6rem .9rem; border-radius:10px; cursor:pointer; font-weight:900}
@@ -162,8 +198,7 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 .grid{
   display:grid; gap:18px;
   grid-template-columns:repeat(auto-fit, minmax(270px, 1fr));
-  align-items:stretch; /* stretch tiles */
-  margin-top:16px;
+  align-items:stretch; margin-top:16px;
 }
 .card{
   position:relative; overflow:hidden; border-radius:16px; border:1px solid var(--border);
@@ -177,11 +212,9 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 .tags{margin-top:auto; display:flex; gap:6px; flex-wrap:wrap}
 .tags span{font-size:.78rem; border:1px solid var(--border); background:rgba(255,255,255,.04); padding:.25rem .45rem; border-radius:8px}
 .card:hover{transform:translateY(-4px) scale(1.01)}
-/* Card shine */
 .shine::before{
   content:""; position:absolute; inset:-200% -50% auto -50%; height:200%; transform:rotate(20deg);
-  background:linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
-  opacity:0; transition:opacity .3s;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent); opacity:0; transition:opacity .3s;
 }
 .shine:hover::before{opacity:.8; animation:shineSwipe 1s ease}
 @keyframes shineSwipe{to{transform:translateX(200%) rotate(20deg)}}
@@ -215,13 +248,7 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 /* Performance hints */
 .card, .hero-photo, .hero-photo img, .ring, .blob { will-change: transform; }
 
-/* Optional: full-width CTA on small screens */
+/* Small screens */
 @media (max-width:520px){ .cta-row .btn{ flex:1 1 100%; } }
-
-/* Responsive */
 @media (max-width:920px){ .navlinks a:nth-child(n+6){display:none} }
-@media (max-width:760px){
-  .navlinks a{display:none}
-  .navbar{padding:8px 12px}
-  .hero-stats{gap:8px}
-}
+@media (max-width:760px){ .navlinks a{display:none} .navbar{padding:8px 12px} .hero-stats{gap:8px} }
