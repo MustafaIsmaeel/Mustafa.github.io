@@ -4,6 +4,7 @@ html{
   --text:#eaf1fb; --muted:#a5b2c7; --primary:#00e7ff; --accent:#ff3db3;
   --ring:rgba(0,231,255,.5); --shadow:0 18px 48px -18px rgba(0,0,0,.55);
   --beam: linear-gradient(90deg, rgba(0,231,255,.28), rgba(255,61,179,.28));
+  --hue: 0deg; /* will animate with scroll */
 }
 html[data-theme="light"]{
   --bg:#f7f9fc; --panel:rgba(0,0,0,.04); --border:rgba(0,0,0,.12);
@@ -23,9 +24,20 @@ body{
     radial-gradient(700px 400px at 10% -5%, rgba(255,61,179,.08), transparent),
     var(--bg);
   overflow-x:hidden;
+  filter:hue-rotate(var(--hue));
 }
 
-/* Scroll progress bar */
+/* Page transition portal */
+#transition{
+  position:fixed; inset:0; pointer-events:none; z-index:1100;
+  --r:0px;
+  background:radial-gradient(circle at var(--cx,50%) var(--cy,50%), rgba(0,231,255,.8), rgba(255,61,179,.8) 40%, transparent 42%);
+  -webkit-mask:radial-gradient(circle var(--r) at var(--cx,50%) var(--cy,50%), #000 98%, transparent 100%);
+  mask:radial-gradient(circle var(--r) at var(--cx,50%) var(--cy,50%), #000 98%, transparent 100%);
+  opacity:0;
+}
+
+/* Scroll progress */
 #scrollbar{
   position:fixed; top:0; left:0; height:3px; width:0%;
   background:linear-gradient(90deg, var(--primary), var(--accent));
@@ -63,6 +75,15 @@ body{
 .o2{width:8px; height:8px}
 .o3{width:10px; height:10px}
 
+/* Film grain overlay */
+#grain{
+  position:fixed; inset:0; pointer-events:none; z-index:-997;
+  background:
+    repeating-conic-gradient(from 0deg, rgba(255,255,255,.02) 0deg 10deg, transparent 10deg 20deg);
+  mix-blend-mode:overlay; opacity:.35; animation:grain 8s steps(10) infinite;
+}
+@keyframes grain{to{transform:translate3d(1px,-1px,0)}}
+
 /* Glass + layout */
 .glass{
   background:var(--panel); border:1px solid var(--border);
@@ -92,7 +113,7 @@ body{
 html[data-theme="light"] .btn-icon .sun{display:inline}
 html[data-theme="light"] .btn-icon .moon{display:none}
 
-/* Ensure content highest */
+/* Ensure content above bg */
 .section, .card, .hero-inner, .navbar, footer, .resume-modal { position:relative; z-index:5; }
 
 /* Hero */
@@ -114,6 +135,17 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 .ring1{width:240px; height:240px; animation-duration:18s}
 .ring2{width:280px; height:280px; animation-direction:reverse; animation-duration:24s}
 
+/* Orbiting icons */
+.orbit{position:absolute; inset:0; margin:0; padding:0; list-style:none; pointer-events:none}
+.orbit li{position:absolute; left:50%; top:50%; transform-origin:-100px 0; animation:orbit 10s linear infinite}
+.orbit li:nth-child(1){animation-duration:12s}
+.orbit li:nth-child(2){animation-duration:10s}
+.orbit li:nth-child(3){animation-duration:16s}
+.orbit li:nth-child(4){animation-duration:9s}
+.orbit li:nth-child(5){animation-duration:13s}
+.orbit li:nth-child(6){animation-duration:15s}
+@keyframes orbit{to{transform:rotate(360deg)}}
+
 .title{font-size:clamp(2rem,3.8vw,3.4rem); line-height:1.2; margin:10px 0 10px; position:relative}
 .title b{color:var(--primary)}
 .spark{position:absolute; left:50%; transform:translateX(-50%); width:70%; color:var(--accent); opacity:.0}
@@ -124,7 +156,7 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 @keyframes blink{50%{opacity:0}}
 .lead{color:var(--muted); max-width:860px; margin:10px auto 18px}
 
-/* CTA buttons + gooey */
+/* CTA + gooey */
 .cta-row{
   display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center;
   margin:18px 0 28px; filter:url(#goo);
@@ -152,10 +184,8 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 }
 @keyframes ripple{to{width:240px; height:240px; opacity:0}}
 
-/* Neon animated gradient borders */
-.neon-border{
-  position:relative; isolation:isolate;
-}
+/* Neon gradient borders */
+.neon-border{position:relative; isolation:isolate}
 .neon-border::after{
   content:""; position:absolute; inset:-1px; border-radius:18px; z-index:-1;
   background:conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary));
@@ -189,7 +219,7 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 .chip-grid{list-style:none; display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:16px 0 0}
 .chip{padding:.65rem .9rem; border-radius:999px; background:var(--panel); border:1px solid var(--border); color:var(--text); font-weight:800}
 
-/* Projects grid + cards (equal-height) */
+/* Projects */
 .section-head{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px}
 .filters{display:flex; gap:8px}
 .filter{border:1px solid var(--border); background:var(--panel); color:var(--muted); padding:.6rem .9rem; border-radius:10px; cursor:pointer; font-weight:900}
@@ -205,7 +235,18 @@ html[data-theme="light"] .btn-icon .moon{display:none}
   background:var(--panel); transition:transform .3s, box-shadow .3s; box-shadow:var(--shadow);
   display:flex; flex-direction:column; will-change:transform;
 }
-.card img{width:100%; height:190px; object-fit:cover; display:block; filter:saturate(1.08) contrast(1.05)}
+.img-wrap{position:relative; overflow:hidden}
+.img-wrap img{width:100%; height:190px; object-fit:cover; display:block; filter:saturate(1.08) contrast(1.05)}
+/* Glitch flash on hover */
+.glitch:hover img{animation:glitch 700ms steps(2,end)}
+@keyframes glitch{
+  0%{clip-path:inset(0 0 0 0)}
+  20%{clip-path:inset(10% 0 15% 0)}
+  40%{clip-path:inset(0 0 20% 0); filter:hue-rotate(30deg)}
+  60%{clip-path:inset(15% 0 10% 0)}
+  80%{clip-path:inset(0 0 0 0); filter:contrast(1.2)}
+  100%{clip-path:inset(0 0 0 0)}
+}
 .card-body{padding:14px; display:flex; flex-direction:column; gap:8px; flex:1}
 .card h3{margin:4px 0 0}
 .card p{color:var(--muted); margin:0}
@@ -219,33 +260,20 @@ html[data-theme="light"] .btn-icon .moon{display:none}
 .shine:hover::before{opacity:.8; animation:shineSwipe 1s ease}
 @keyframes shineSwipe{to{transform:translateX(200%) rotate(20deg)}}
 
-/* Cases, Certs, Testimonials */
-.case{padding:14px}
-.case summary{cursor:pointer; font-weight:800; color:var(--text)}
-.case-body{margin-top:10px; color:var(--muted)}
-.certs{list-style:disc; padding-left:1.2rem; color:var(--muted)}
-.certs li{margin:.35rem 0}
-.certs span{color:var(--text); font-weight:700}
-.quotes{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
-.quote{padding:16px; font-style:italic}
-.quote cite{display:block; margin-top:8px; font-style:normal; color:var(--muted)}
-
-/* Footer */
+/* Footer & modal */
 .footer{margin:70px 12px 22px; padding:16px 18px; text-align:center; color:var(--muted)}
-
-/* Resume Modal */
 .resume-modal{border:none; width:min(980px, 96vw); max-height:90vh; padding:0}
 .resume-modal::backdrop{background:rgba(0,0,0,.55)}
 .resume-head{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border)}
 .resume-modal iframe{width:100%; height:70vh; border:0}
 .resume-actions{display:flex; justify-content:flex-end; gap:10px; padding:14px 16px; border-top:1px solid var(--border)}
 
-/* Animations */
+/* Base animations */
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Performance hints */
+/* Performance */
 .card, .hero-photo, .hero-photo img, .ring, .blob { will-change: transform; }
 
 /* Small screens */
