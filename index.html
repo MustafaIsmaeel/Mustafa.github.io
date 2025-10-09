@@ -20,24 +20,32 @@
         } else {
           document.documentElement.setAttribute('data-theme', saved);
         }
-      } catch (e) {/* ignore */}
+      } catch (e) {}
     })();
   </script>
 
-  <!-- Motion & 3D libs (optional; page works without them) -->
+  <!-- Motion & 3D libs -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/split-type@0.3.3/umd/index.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r155/three.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
 </head>
 <body>
-  <!-- Animated shader + particles background -->
+  <!-- Background -->
   <canvas id="bg" aria-hidden="true"></canvas>
 
-  <!-- Cursor aura + gradient trail -->
+  <!-- Cursor: beam + orbs + trail -->
   <div id="cursor" aria-hidden="true"></div>
   <div id="trail" aria-hidden="true"></div>
+  <div id="beam" aria-hidden="true"></div>
+  <div class="orb o1" aria-hidden="true"></div>
+  <div class="orb o2" aria-hidden="true"></div>
+  <div class="orb o3" aria-hidden="true"></div>
+
+  <!-- Scroll progress bar -->
+  <div id="scrollbar" aria-hidden="true"></div>
 
   <!-- Top navigation -->
   <header class="navbar glass">
@@ -62,7 +70,7 @@
   <section id="hero" class="viewport">
     <div class="hero-inner">
       <div class="hero-top">
-        <div class="hero-photo tilt">
+        <div class="hero-photo tilt neon-border">
           <div class="blob" aria-hidden="true"></div>
           <img src="assets/mustafa.jpg" alt="Mustafa Alsaegh portrait" />
           <span class="ring ring1"></span>
@@ -71,6 +79,9 @@
 
         <h1 class="title">
           <span class="title-line">Hey, I’m <b>Mustafa</b>.</span>
+          <svg class="spark" viewBox="0 0 500 40" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M5 20 Q 120 5, 240 20 T 495 20" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </svg>
         </h1>
       </div>
 
@@ -84,9 +95,9 @@
       </p>
 
       <div class="cta-row">
-        <a href="#projects" class="btn btn-primary magnet ripple">Explore Work</a>
-        <a href="#contact" class="btn btn-ghost ripple">Contact</a>
-        <button class="btn btn-ghost ripple" id="openResume">View Résumé</button>
+        <a href="#projects" class="btn btn-primary magnet ripple goo">Explore Work</a>
+        <a href="#contact" class="btn btn-ghost ripple goo">Contact</a>
+        <button class="btn btn-ghost ripple goo" id="openResume">View Résumé</button>
       </div>
 
       <div class="hero-stats">
@@ -101,7 +112,7 @@
 
   <!-- ABOUT -->
   <section id="about" class="section glass">
-    <h2>About</h2>
+    <h2 class="headline">About</h2>
     <p>
       I specialize in turning multi-source, messy institutional datasets into clean pipelines and clear analytics. I’ve built
       <b>Explorance Blue</b> survey dashboards for leadership, automated <b>Canvas</b> & <b>ServiceNow</b> data flows, and delivered
@@ -112,7 +123,7 @@
 
   <!-- EXPERIENCE -->
   <section id="experience" class="section">
-    <h2>Experience</h2>
+    <h2 class="headline">Experience</h2>
     <div class="timeline">
       <div class="t-item glass">
         <div class="t-meta">
@@ -140,7 +151,7 @@
 
   <!-- SKILLS -->
   <section id="skills" class="section">
-    <h2>Skills</h2>
+    <h2 class="headline">Skills</h2>
     <ul class="chip-grid">
       <li class="chip tilt">Python</li>
       <li class="chip tilt">pandas</li>
@@ -160,7 +171,7 @@
   <!-- PROJECTS -->
   <section id="projects" class="section glass">
     <div class="section-head">
-      <h2>Featured Projects</h2>
+      <h2 class="headline">Featured Projects</h2>
       <div class="filters" role="tablist" aria-label="Project filters">
         <button class="filter active" data-filter="all" role="tab" aria-selected="true">All</button>
         <button class="filter" data-filter="dashboard" role="tab">Dashboards</button>
@@ -169,8 +180,8 @@
       </div>
     </div>
 
-    <div class="grid depth-parallax">
-      <article class="card tilt shine" data-tags="dashboard">
+    <div class="grid depth-parallax" id="projectGrid">
+      <article class="card tilt shine neon-border" data-tags="dashboard">
         <img src="assets/project1.jpg" alt="SOQ analytics dashboard preview" />
         <div class="card-body">
           <h3>SOQ Analytics Dashboard</h3>
@@ -179,7 +190,7 @@
         </div>
       </article>
 
-      <article class="card tilt shine" data-tags="etl api">
+      <article class="card tilt shine neon-border" data-tags="etl api">
         <img src="assets/project2.jpg" alt="ETL automation pipeline preview" />
         <div class="card-body">
           <h3>ETL Automation Pipeline</h3>
@@ -188,7 +199,7 @@
         </div>
       </article>
 
-      <article class="card tilt shine" data-tags="api">
+      <article class="card tilt shine neon-border" data-tags="api">
         <img src="assets/project3.jpg" alt="Canvas API integration preview" />
         <div class="card-body">
           <h3>Canvas Data Integration</h3>
@@ -197,7 +208,7 @@
         </div>
       </article>
 
-      <article class="card tilt shine" data-tags="dashboard">
+      <article class="card tilt shine neon-border" data-tags="dashboard">
         <img src="assets/project4.jpg" alt="Admin operations dashboard preview" />
         <div class="card-body">
           <h3>Admin Ops Dashboard</h3>
@@ -210,7 +221,7 @@
 
   <!-- CASE STUDIES -->
   <section id="cases" class="section">
-    <h2>Case Studies</h2>
+    <h2 class="headline">Case Studies</h2>
     <div class="cases">
       <details class="case glass">
         <summary><b>Boosting SOQ Response Rates</b> — division dashboards & nudges</summary>
@@ -233,7 +244,7 @@
 
   <!-- CERTIFICATIONS -->
   <section id="certs" class="section glass">
-    <h2>Certifications</h2>
+    <h2 class="headline">Certifications</h2>
     <ul class="certs">
       <li><span>Power BI Associate</span> — Microsoft</li>
       <li><span>Explorance Blue Expert</span></li>
@@ -244,7 +255,7 @@
 
   <!-- TESTIMONIALS -->
   <section id="testimonials" class="section">
-    <h2>Testimonials</h2>
+    <h2 class="headline">Testimonials</h2>
     <div class="quotes">
       <blockquote class="quote glass">
         “Mustafa delivered dashboards our deans actually use. Clear KPIs, fast load, and the right filters.”
@@ -259,30 +270,45 @@
 
   <!-- CONTACT -->
   <section id="contact" class="section">
-    <h2>Let’s Connect</h2>
+    <h2 class="headline">Let’s Connect</h2>
     <p>Have a role or idea? I’m open to collaborations and interesting problems.</p>
     <div class="cta-row">
-      <a class="btn btn-primary magnet ripple" href="mailto:malsaegh1@gmail.com">Email Me</a>
-      <a class="btn btn-ghost ripple" target="_blank" href="https://linkedin.com/in/mustafa-alsaegh">LinkedIn</a>
-      <a class="btn btn-ghost ripple" target="_blank" href="https://github.com/mustafa">GitHub</a>
+      <a class="btn btn-primary magnet ripple goo" href="mailto:malsaegh1@gmail.com">Email Me</a>
+      <a class="btn btn-ghost ripple goo" target="_blank" href="https://linkedin.com/in/mustafa-alsaegh">LinkedIn</a>
+      <a class="btn btn-ghost ripple goo" target="_blank" href="https://github.com/mustafa">GitHub</a>
     </div>
   </section>
 
   <footer class="footer glass">
-    © <span id="y"></span> Mustafa Alsaegh — Built with ❤️ and coffee :) it's a necessity   
+    © <span id="y"></span> Mustafa Alsaegh — Built with ❤️ and coffee :)
   </footer>
 
   <!-- Resume Modal -->
   <dialog id="resumeModal" class="resume-modal glass">
     <div class="resume-head">
       <h3>Résumé — PDF Preview</h3>
-      <button id="closeResume" class="btn btn-ghost ripple">Close</button>
+      <button id="closeResume" class="btn btn-ghost ripple goo">Close</button>
     </div>
     <iframe id="resumeFrame" src="assets/resume.pdf" title="Resume PDF" loading="lazy"></iframe>
     <div class="resume-actions">
-      <a class="btn btn-primary ripple" href="assets/resume.pdf" download>Download PDF</a>
+      <a class="btn btn-primary ripple goo" href="assets/resume.pdf" download>Download PDF</a>
     </div>
   </dialog>
+
+  <!-- SVG filter: Gooey buttons -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <filter id="goo" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+        <feColorMatrix in="blur" mode="matrix" values="
+          1 0 0 0 0
+          0 1 0 0 0
+          0 0 1 0 0
+          0 0 0 20 -10" result="goo"/>
+        <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+      </filter>
+    </defs>
+  </svg>
 
   <script src="script.js" defer></script>
   <noscript><style>.section,.navbar,.footer{opacity:1!important;transform:none!important}</style></noscript>
