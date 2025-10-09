@@ -1,14 +1,19 @@
+// Ensure everything runs after DOM + libs are ready
+document.addEventListener('DOMContentLoaded', () => {
+
 /***** YEAR *****/
 document.getElementById('y').textContent = new Date().getFullYear();
 
-/***** THEME TOGGLE *****/
-const root = document.documentElement;
+/***** THEME TOGGLE (reliable) *****/
+const rootEl = document.documentElement;          // <html>
 const themeToggle = document.getElementById('themeToggle');
 const savedTheme = localStorage.getItem('theme');
-if (savedTheme) root.setAttribute('data-theme', savedTheme);
+if (savedTheme === 'light' || savedTheme === 'dark') {
+  rootEl.setAttribute('data-theme', savedTheme);
+}
 themeToggle.addEventListener('click', () => {
-  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  root.setAttribute('data-theme', next);
+  const next = rootEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  rootEl.setAttribute('data-theme', next);
   localStorage.setItem('theme', next);
 });
 
@@ -55,7 +60,7 @@ filters.forEach(f => f.addEventListener('click', () => {
   });
 }));
 
-/***** TYPEWRITER SUBTITLE *****/
+/***** TYPEWRITER SUBTITLE — robust *****/
 const titles = [
   "Data Engineering",
   "Automation Architect",
@@ -63,33 +68,55 @@ const titles = [
   "ETL Pipeline Builder",
   "Power BI Developer"
 ];
-let i = 0, j = 0, current = "", isDeleting = false;
-const el = document.getElementById("typed");
-function type() {
-  const full = titles[i];
-  if (isDeleting) current = full.substring(0, j--);
-  else current = full.substring(0, j++);
-  el.textContent = current;
+let idx = 0, len = 0, deleting = false;
+const typedEl = document.getElementById('typed');
 
-  let speed = isDeleting ? 75 : 115;
-  if (!isDeleting && j === full.length) { speed = 1400; isDeleting = true; }
-  else if (isDeleting && j === 0) { isDeleting = false; i = (i + 1) % titles.length; speed = 500; }
-  setTimeout(type, speed);
+function typeLoop() {
+  const full = titles[idx];
+  if (!typedEl) return; // safety
+  if (!deleting && len <= full.length) {
+    typedEl.textContent = full.substring(0, len++);
+  } else if (deleting && len >= 0) {
+    typedEl.textContent = full.substring(0, len--);
+  }
+  let speed = deleting ? 70 : 110;
+  if (len === full.length + 1) { deleting = true; speed = 1400; }
+  if (len === -1) { deleting = false; idx = (idx + 1) % titles.length; speed = 500; len = 0; }
+  setTimeout(typeLoop, speed);
 }
-type();
+typeLoop();
 
-/***** GSAP + SplitType: HERO ENTRY *****/
+/***** GSAP + SplitType: HERO ENTRY & Scroll Effects *****/
 gsap.registerPlugin(ScrollTrigger);
 new window.SplitType('.title-line', { types: 'chars,words' });
-gsap.from('.hero-photo', { scale: 0, opacity: 0, duration: 1.1, ease: 'back.out(1.8)' });
-gsap.from('.char', { y: 80, rotateX: -90, opacity: 0, duration: 1.1, stagger: 0.02, ease: 'back.out(1.7)', delay: 0.1 });
-gsap.from('.lead', { opacity: 0, y: 30, duration: 0.6, delay: 0.35 });
-gsap.from('.cta-row .btn', { opacity: 0, y: 24, stagger: 0.08, duration: 0.5, delay: 0.45 });
-gsap.from('.stat', { opacity: 0, scale: 0.85, duration: 0.7, stagger: 0.08, ease: 'power2.out', delay: 0.6 });
 
-/***** SECTION REVEALS *****/
-gsap.utils.toArray('.reveal').forEach(elm => {
-  gsap.to(elm, { opacity: 1, y: 0, duration: .8, ease: 'power3.out', scrollTrigger: { trigger: elm, start: 'top 85%' } });
+const tl = gsap.timeline();
+tl.from('.hero-photo', { scale: 0, opacity: 0, duration: 1.0, ease: 'back.out(1.8)' })
+  .from('.char', { y: 80, rotateX: -90, opacity: 0, duration: 1.1, stagger: 0.02, ease: 'back.out(1.7)' }, '-=0.4')
+  .from('.lead', { opacity: 0, y: 30, duration: 0.6 }, '-=0.6')
+  .from('.cta-row .btn', { opacity: 0, y: 24, stagger: 0.08, duration: 0.5 }, '-=0.4')
+  .from('.stat', { opacity: 0, scale: 0.85, duration: 0.7, stagger: 0.08, ease: 'power2.out' }, '-=0.2');
+
+/* Section reveals */
+gsap.utils.toArray('.reveal').forEach(el => {
+  gsap.to(el, {
+    opacity: 1, y: 0, duration: .8, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%' }
+  });
+});
+
+/* Scroll skew for cards */
+const proxy = { skew: 0 };
+const skewSetter = gsap.quickSetter('.card', 'skewY', 'deg');
+ScrollTrigger.create({
+  onUpdate: (self) => {
+    let s = self.getVelocity() / -300;
+    if (Math.abs(s) > Math.abs(proxy.skew)) {
+      proxy.skew = gsap.utils.clamp(-10, 10, s);
+      gsap.to(proxy, { skew: 0, duration: 0.6, ease: 'power3', overwrite: true });
+    }
+    skewSetter(proxy.skew);
+  }
 });
 
 /***** NAV DARKEN ON SCROLL *****/
@@ -159,7 +186,7 @@ const pCam = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 1, 1000);
 pCam.position.z = 400;
 
 const pGeo = new THREE.BufferGeometry();
-const pCount = 1100; // stays performant
+const pCount = 1200; // performant but lively
 const pPos = new Float32Array(pCount * 3);
 for (let i = 0; i < pCount * 3; i++) pPos[i] = (Math.random() - 0.5) * 900;
 pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
@@ -202,12 +229,12 @@ render();
 
 /***** RESUME MODAL *****/
 const modal = document.getElementById('resumeModal');
-const openBtn = document.getElementById('openResume');
-const closeBtn = document.getElementById('closeResume');
-openBtn?.addEventListener('click', () => modal?.showModal());
-closeBtn?.addEventListener('click', () => modal?.close());
+document.getElementById('openResume')?.addEventListener('click', () => modal?.showModal());
+document.getElementById('closeResume')?.addEventListener('click', () => modal?.close());
 
 /***** UX: Scroll indicator -> About *****/
 document.querySelector('.scroll-indicator')?.addEventListener('click', () => {
   document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
 });
+
+}); // DOMContentLoaded
