@@ -36,10 +36,10 @@ body{
   overflow-x:hidden;
 }
 
-/* 3D shader canvas */
-#bg{position:fixed; inset:0; z-index:-2; display:block}
+/* 3D background canvas */
+#bg{position:fixed; inset:0; z-index:-10; display:block}
 
-/* Cursor aura + trail */
+/* Cursor aura + trailing radial trail */
 #cursor{
   position:fixed; width:36px; height:36px; border-radius:50%;
   background:radial-gradient(circle at 30% 30%, var(--accent), transparent 60%);
@@ -47,7 +47,7 @@ body{
   transform:translate(-50%,-50%); filter:blur(2px);
 }
 #trail{
-  position:fixed; inset:0; z-index:-3; pointer-events:none;
+  position:fixed; inset:0; z-index:-8; pointer-events:none;
   background:radial-gradient(circle at var(--tx, -100px) var(--ty, -100px), rgba(255,61,179,.15), transparent 40%),
               radial-gradient(circle at calc(var(--tx, -100px) - 80px) calc(var(--ty, -100px) + 60px), rgba(0,231,255,.12), transparent 45%);
   transition:background-position .12s ease;
@@ -64,7 +64,7 @@ body{
 
 /* NAVBAR */
 .navbar{
-  position:sticky; top:0; z-index:20;
+  position:sticky; top:0; z-index:50; /* ensure on top */
   margin:12px; padding:10px 16px;
   display:flex; align-items:center; justify-content:space-between;
 }
@@ -83,6 +83,9 @@ body{
 .btn-icon .sun{display:none}
 [data-theme="light"] .btn-icon .sun{display:inline}
 [data-theme="light"] .btn-icon .moon{display:none}
+
+/* Ensure content above background */
+.section, .card, .hero-inner, .navbar, footer { position:relative; z-index:5; }
 
 /* HERO */
 .viewport{min-height:92vh; display:grid; place-items:center; padding:90px 16px}
@@ -111,13 +114,15 @@ body{
 
 .title{font-size:clamp(2rem,3.8vw,3.4rem); line-height:1.2; margin:10px 0 10px}
 .title b{color:var(--primary)}
-.title .neon{
-  display:block;
-  background:linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  background-size:300% 100%; animation:gradient 9s linear infinite;
+
+/* TYPEWRITER SUBTITLE */
+.typed-line{
+  font-size:1.4rem; color:var(--accent); margin:.6rem 0 0; font-weight:800; min-height:2rem
 }
-.lead{color:var(--muted); max-width:860px; margin:0 auto 18px}
+.cursor-blink{display:inline-block; animation:blink 1s step-start infinite}
+@keyframes blink{50%{opacity:0}}
+
+.lead{color:var(--muted); max-width:860px; margin:10px auto 18px}
 
 .cta-row{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin:18px 0 28px}
 .btn{
@@ -190,7 +195,6 @@ body{
 .footer{margin:70px 12px 22px; padding:16px 18px; text-align:center; color:var(--muted)}
 
 /* ANIMATIONS */
-@keyframes gradient{0%{background-position:0% 50%}100%{background-position:200% 50%}}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -201,17 +205,3 @@ body{
   .navbar{padding:8px 12px}
   .hero-stats{gap:8px}
 }
-
-.typed-line{
-  font-size:1.4rem;
-  color:var(--accent);
-  margin-top:.6rem;
-  font-weight:700;
-  min-height:2rem;
-}
-.cursor-blink{
-  display:inline-block;
-  animation:blink 1s step-start infinite;
-}
-@keyframes blink{50%{opacity:0}}
-
