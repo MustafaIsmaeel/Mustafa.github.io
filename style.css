@@ -130,3 +130,18 @@ body{
 .card h3{margin:4px 0 8px}
 .card p{color:var(--muted); margin:0 0 10px}
 .t
+
+
+#cursor{
+  position:fixed; width:12px; height:12px;
+  background:var(--primary); border-radius:50%; pointer-events:none;
+  transform:translate(-50%,-50%); z-index:999;
+  box-shadow:0 0 12px var(--primary),0 0 24px var(--accent);
+  mix-blend-mode:exclusion;
+}
+.cursor-dot{
+  position:fixed; width:8px; height:8px;
+  background:var(--accent); border-radius:50%; pointer-events:none;
+  transform:translate(-50%,-50%); z-index:998; opacity:.25;
+  filter:blur(3px); transition:all .15s ease;
+}
