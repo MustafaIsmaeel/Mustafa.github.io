@@ -12,6 +12,12 @@ themeToggle.addEventListener('click', () => {
   localStorage.setItem('theme', next);
 });
 
+/***** CURSOR AURA *****/
+const cursor = document.getElementById('cursor');
+window.addEventListener('mousemove', e => {
+  gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.12, ease: 'power3.out' });
+});
+
 /***** MAGNETIC BUTTON HOVER *****/
 document.querySelectorAll('.magnet').forEach(btn => {
   btn.addEventListener('mousemove', e => {
@@ -26,13 +32,7 @@ document.querySelectorAll('.magnet').forEach(btn => {
 /***** VANILLA TILT (3D tilt on cards/chips/stats) *****/
 const tiltEls = document.querySelectorAll('.tilt, .card, .chip');
 if (tiltEls.length) {
-  VanillaTilt.init(tiltEls, {
-    max: 8,
-    speed: 600,
-    glare: true,
-    'max-glare': 0.2,
-    gyroscope: true
-  });
+  VanillaTilt.init(tiltEls, { max: 8, speed: 600, glare: true, 'max-glare': 0.18, gyroscope: true });
 }
 
 /***** PROJECT FILTERS *****/
@@ -46,35 +46,45 @@ filters.forEach(f => f.addEventListener('click', () => {
     const tags = c.dataset.tags.split(' ');
     const show = tag === 'all' || tags.includes(tag);
     c.style.display = show ? '' : 'none';
-    if (show) gsap.fromTo(c, {opacity:0, y:20}, {opacity:1, y:0, duration:.35, overwrite:true});
+    if (show) gsap.fromTo(c, { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .35, overwrite: true });
   });
 }));
 
-/***** GSAP SCROLL REVEALS *****/
+/***** GSAP + SplitType: HERO ENTRY *****/
 gsap.registerPlugin(ScrollTrigger);
+const st1 = new window.SplitType('.title-line', { types: 'chars' });
+gsap.from('.char', {
+  y: 100, rotateX: -90, opacity: 0, duration: 1.2, stagger: 0.02, ease: 'back.out(1.7)', delay: 0.1
+});
+gsap.from('.stat', { opacity: 0, scale: 0.8, duration: 0.8, stagger: 0.08, ease: 'power2.out', delay: 0.6 });
+
+/***** SECTION REVEALS *****/
 gsap.utils.toArray('.reveal').forEach(el => {
   gsap.to(el, {
-    opacity: 1, y: 0, duration: .7, ease: 'power3.out',
+    opacity: 1, y: 0, duration: .8, ease: 'power3.out',
     scrollTrigger: { trigger: el, start: 'top 85%' }
   });
 });
-gsap.from('.stat', {opacity:0, y:20, duration:.6, stagger:.08, ease:'power2.out', delay:.2});
 
-/***** NAV GLASS OPACITY ON SCROLL *****/
+/***** NAV DARKEN ON SCROLL *****/
 const nav = document.querySelector('.navbar');
 window.addEventListener('scroll', () => {
   const op = Math.min(0.9, 0.25 + window.scrollY / 500);
   nav.style.background = `rgba(0,0,0,${op})`;
 });
 
-/***** THREE.JS — MINIMAL 3D ORB *****/
+/***** Lenis Smooth Scroll *****/
+const lenis = new Lenis({ smoothWheel: true, wheelMultiplier: 1.1 });
+function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+requestAnimationFrame(raf);
+
+/***** THREE.JS — NEBULA + STARS *****/
 const canvas = document.getElementById('scene');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
 camera.position.set(0, 0, 6);
 
-// Resize
 function onResize(){
   renderer.setSize(innerWidth, innerHeight);
   camera.aspect = innerWidth/innerHeight;
@@ -82,61 +92,10 @@ function onResize(){
 }
 addEventListener('resize', onResize); onResize();
 
-// Geometry (wireframe torus + points)
-const torus = new THREE.Mesh(
-  new THREE.TorusKnotGeometry(1.4, .38, 140, 32),
-  new THREE.MeshBasicMaterial({ color: 0x00e7ff, wireframe: true, transparent:true, opacity: .22 })
-);
-const starsGeom = new THREE.BufferGeometry();
-const starCount = 600;
-const positions = new Float32Array(starCount * 3);
-for (let i = 0; i < starCount * 3; i++) positions[i] = (Math.random() - .5) * 30;
-starsGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-const stars = new THREE.Points(
-  starsGeom,
-  new THREE.PointsMaterial({ color: 0xffffff, size: .012, transparent:true, opacity:.6 })
-);
-scene.add(torus, stars);
-
-// Parallax
-let targetX = 0, targetY = 0;
-addEventListener('mousemove', (e)=>{
-  const x = (e.clientX / innerWidth - .5) * 2;
-  const y = (e.clientY / innerHeight - .5) * 2;
-  targetX = x; targetY = y;
-});
-
-// Animate
-function tick(){
-  requestAnimationFrame(tick);
-  torus.rotation.x += 0.0025;
-  torus.rotation.y += 0.004;
-
-  // gentle parallax
-  camera.position.x += (targetX - camera.position.x) * 0.03;
-  camera.position.y += (-targetY - camera.position.y) * 0.03;
-  camera.lookAt(0,0,0);
-
-  // twinkle
-  stars.rotation.y += 0.0008;
-  renderer.render(scene, camera);
-}
-tick();
-// --- Neon Cursor Trail ---
-const cursor = document.createElement('div');
-cursor.id = 'cursor';
-document.body.appendChild(cursor);
-const trail = [];
-for (let i=0;i<15;i++){
-  const dot=document.createElement('div');
-  dot.className='cursor-dot';
-  document.body.appendChild(dot);
-  trail.push(dot);
-}
-document.addEventListener('mousemove', e=>{
-  cursor.style.left = e.clientX+'px';
-  cursor.style.top  = e.clientY+'px';
-  trail.forEach((d,i)=>{
-    setTimeout(()=>{d.style.left=e.clientX+'px'; d.style.top=e.clientY+'px';}, i*25);
-  });
-});
+// Nebula points (colored sphere)
+const nebulaGeo = new THREE.SphereGeometry(4, 64, 64);
+const nebulaMat = new THREE.PointsMaterial({ size: 0.02, vertexColors: true, transparent: true, opacity: 0.9 });
+const cols = []; const pos = nebulaGeo.attributes.position;
+for (let i = 0; i < pos.count; i++) {
+  // cool gradient mix
+  const t = i/pos.c
