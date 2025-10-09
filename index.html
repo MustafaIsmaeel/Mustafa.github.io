@@ -17,9 +17,7 @@
         if (!saved) {
           var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
           document.documentElement.setAttribute('data-theme', prefersLight ? 'light' : 'dark');
-        } else {
-          document.documentElement.setAttribute('data-theme', saved);
-        }
+        } else { document.documentElement.setAttribute('data-theme', saved); }
       } catch (e) {}
     })();
   </script>
@@ -33,10 +31,10 @@
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
 </head>
 <body>
-  <!-- Background -->
+  <!-- Shader + particles BG -->
   <canvas id="bg" aria-hidden="true"></canvas>
 
-  <!-- Cursor: beam + orbs + trail -->
+  <!-- Cursor fx -->
   <div id="cursor" aria-hidden="true"></div>
   <div id="trail" aria-hidden="true"></div>
   <div id="beam" aria-hidden="true"></div>
@@ -44,21 +42,27 @@
   <div class="orb o2" aria-hidden="true"></div>
   <div class="orb o3" aria-hidden="true"></div>
 
-  <!-- Scroll progress bar -->
+  <!-- Grain overlay -->
+  <div id="grain" aria-hidden="true"></div>
+
+  <!-- Scroll progress -->
   <div id="scrollbar" aria-hidden="true"></div>
 
-  <!-- Top navigation -->
+  <!-- Page transition portal -->
+  <div id="transition" aria-hidden="true"></div>
+
+  <!-- Navbar -->
   <header class="navbar glass">
-    <a class="logo" href="#hero" aria-label="Go to top">Mustafa<span>.dev</span></a>
+    <a class="logo" href="#hero" data-jump aria-label="Go to top">Mustafa<span>.dev</span></a>
     <nav class="navlinks" aria-label="Main">
-      <a href="#about">About</a>
-      <a href="#experience">Experience</a>
-      <a href="#skills">Skills</a>
-      <a href="#projects">Projects</a>
-      <a href="#cases">Case Studies</a>
-      <a href="#certs">Certs</a>
-      <a href="#testimonials">Testimonials</a>
-      <a href="#contact">Contact</a>
+      <a href="#about" data-jump>About</a>
+      <a href="#experience" data-jump>Experience</a>
+      <a href="#skills" data-jump>Skills</a>
+      <a href="#projects" data-jump>Projects</a>
+      <a href="#cases" data-jump>Case Studies</a>
+      <a href="#certs" data-jump>Certs</a>
+      <a href="#testimonials" data-jump>Testimonials</a>
+      <a href="#contact" data-jump>Contact</a>
       <button id="themeToggle" class="btn-icon" aria-label="Toggle theme">
         <span class="sun" aria-hidden="true">☀</span>
         <span class="moon" aria-hidden="true">🌙</span>
@@ -75,6 +79,11 @@
           <img src="assets/mustafa.jpg" alt="Mustafa Alsaegh portrait" />
           <span class="ring ring1"></span>
           <span class="ring ring2"></span>
+
+          <!-- Orbiting tech icons -->
+          <ul class="orbit">
+            <li>🐍</li><li>📊</li><li>🧱</li><li>⚙️</li><li>🔗</li><li>📈</li>
+          </ul>
         </div>
 
         <h1 class="title">
@@ -95,8 +104,8 @@
       </p>
 
       <div class="cta-row">
-        <a href="#projects" class="btn btn-primary magnet ripple goo">Explore Work</a>
-        <a href="#contact" class="btn btn-ghost ripple goo">Contact</a>
+        <a href="#projects" data-jump class="btn btn-primary magnet ripple goo">Explore Work</a>
+        <a href="#contact" data-jump class="btn btn-ghost ripple goo">Contact</a>
         <button class="btn btn-ghost ripple goo" id="openResume">View Résumé</button>
       </div>
 
@@ -112,7 +121,7 @@
 
   <!-- ABOUT -->
   <section id="about" class="section glass">
-    <h2 class="headline">About</h2>
+    <h2 class="headline scramble">About</h2>
     <p>
       I specialize in turning multi-source, messy institutional datasets into clean pipelines and clear analytics. I’ve built
       <b>Explorance Blue</b> survey dashboards for leadership, automated <b>Canvas</b> & <b>ServiceNow</b> data flows, and delivered
@@ -123,7 +132,7 @@
 
   <!-- EXPERIENCE -->
   <section id="experience" class="section">
-    <h2 class="headline">Experience</h2>
+    <h2 class="headline scramble">Experience</h2>
     <div class="timeline">
       <div class="t-item glass">
         <div class="t-meta">
@@ -151,7 +160,7 @@
 
   <!-- SKILLS -->
   <section id="skills" class="section">
-    <h2 class="headline">Skills</h2>
+    <h2 class="headline scramble">Skills</h2>
     <ul class="chip-grid">
       <li class="chip tilt">Python</li>
       <li class="chip tilt">pandas</li>
@@ -171,7 +180,7 @@
   <!-- PROJECTS -->
   <section id="projects" class="section glass">
     <div class="section-head">
-      <h2 class="headline">Featured Projects</h2>
+      <h2 class="headline scramble">Featured Projects</h2>
       <div class="filters" role="tablist" aria-label="Project filters">
         <button class="filter active" data-filter="all" role="tab" aria-selected="true">All</button>
         <button class="filter" data-filter="dashboard" role="tab">Dashboards</button>
@@ -182,7 +191,9 @@
 
     <div class="grid depth-parallax" id="projectGrid">
       <article class="card tilt shine neon-border" data-tags="dashboard">
-        <img src="assets/project1.jpg" alt="SOQ analytics dashboard preview" />
+        <div class="img-wrap glitch">
+          <img src="assets/project1.jpg" alt="SOQ analytics dashboard preview" />
+        </div>
         <div class="card-body">
           <h3>SOQ Analytics Dashboard</h3>
           <p>Division KPI tracking, response rates by modality, trend lines, and drill-through pages for deans.</p>
@@ -191,7 +202,9 @@
       </article>
 
       <article class="card tilt shine neon-border" data-tags="etl api">
-        <img src="assets/project2.jpg" alt="ETL automation pipeline preview" />
+        <div class="img-wrap glitch">
+          <img src="assets/project2.jpg" alt="ETL automation pipeline preview" />
+        </div>
         <div class="card-body">
           <h3>ETL Automation Pipeline</h3>
           <p>Python pipeline merging Banner + Blue with validation, dedupe, data quality checks, and scheduled exports.</p>
@@ -200,7 +213,9 @@
       </article>
 
       <article class="card tilt shine neon-border" data-tags="api">
-        <img src="assets/project3.jpg" alt="Canvas API integration preview" />
+        <div class="img-wrap glitch">
+          <img src="assets/project3.jpg" alt="Canvas API integration preview" />
+        </div>
         <div class="card-body">
           <h3>Canvas Data Integration</h3>
           <p>Nightly REST sync → canonical warehouse tables → BI dashboards and operational reports.</p>
@@ -209,7 +224,9 @@
       </article>
 
       <article class="card tilt shine neon-border" data-tags="dashboard">
-        <img src="assets/project4.jpg" alt="Admin operations dashboard preview" />
+        <div class="img-wrap glitch">
+          <img src="assets/project4.jpg" alt="Admin operations dashboard preview" />
+        </div>
         <div class="card-body">
           <h3>Admin Ops Dashboard</h3>
           <p>Operational KPIs, SLA health, alert tiles, and role-based views for directors and analysts.</p>
@@ -221,7 +238,7 @@
 
   <!-- CASE STUDIES -->
   <section id="cases" class="section">
-    <h2 class="headline">Case Studies</h2>
+    <h2 class="headline scramble">Case Studies</h2>
     <div class="cases">
       <details class="case glass">
         <summary><b>Boosting SOQ Response Rates</b> — division dashboards & nudges</summary>
@@ -244,7 +261,7 @@
 
   <!-- CERTIFICATIONS -->
   <section id="certs" class="section glass">
-    <h2 class="headline">Certifications</h2>
+    <h2 class="headline scramble">Certifications</h2>
     <ul class="certs">
       <li><span>Power BI Associate</span> — Microsoft</li>
       <li><span>Explorance Blue Expert</span></li>
@@ -255,7 +272,7 @@
 
   <!-- TESTIMONIALS -->
   <section id="testimonials" class="section">
-    <h2 class="headline">Testimonials</h2>
+    <h2 class="headline scramble">Testimonials</h2>
     <div class="quotes">
       <blockquote class="quote glass">
         “Mustafa delivered dashboards our deans actually use. Clear KPIs, fast load, and the right filters.”
@@ -270,7 +287,7 @@
 
   <!-- CONTACT -->
   <section id="contact" class="section">
-    <h2 class="headline">Let’s Connect</h2>
+    <h2 class="headline scramble">Let’s Connect</h2>
     <p>Have a role or idea? I’m open to collaborations and interesting problems.</p>
     <div class="cta-row">
       <a class="btn btn-primary magnet ripple goo" href="mailto:malsaegh1@gmail.com">Email Me</a>
@@ -280,7 +297,7 @@
   </section>
 
   <footer class="footer glass">
-    © <span id="y"></span> Mustafa Alsaegh — Built with ❤️ and coffee :)
+    © <span id="y"></span> Mustafa Alsaegh — Built with ❤️, and arabic Coffee
   </footer>
 
   <!-- Resume Modal -->
