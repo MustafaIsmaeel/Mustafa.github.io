@@ -8,8 +8,7 @@
   <link rel="icon" href="assets/mustafa.jpg" type="image/jpeg" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="style.css" />
-
-  <!-- Motion & 3D libs (CDN) -->
+  <!-- Motion & 3D libs -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/split-type@0.3.3/umd/index.min.js"></script>
@@ -37,7 +36,7 @@
       <a href="#certs">Certs</a>
       <a href="#testimonials">Testimonials</a>
       <a href="#contact">Contact</a>
-      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme" title="Theme">
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme">
         <span class="sun" aria-hidden="true">☀</span>
         <span class="moon" aria-hidden="true">🌙</span>
       </button>
@@ -81,6 +80,16 @@
       </div>
 
       <button class="scroll-indicator" aria-label="Scroll to content">Scroll</button>
+
+      <!-- Tech ticker -->
+      <div class="ticker">
+        <div class="track">
+          <span>Python</span><span>pandas</span><span>SQL</span><span>Power BI</span><span>DAX</span>
+          <span>Explorance Blue</span><span>Canvas API</span><span>ServiceNow</span><span>ETL</span><span>Automation</span>
+          <span>Python</span><span>pandas</span><span>SQL</span><span>Power BI</span><span>DAX</span>
+          <span>Explorance Blue</span><span>Canvas API</span><span>ServiceNow</span><span>ETL</span><span>Automation</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -105,18 +114,13 @@
           <span>2024–Present • Ann Arbor, MI</span>
         </div>
         <p>Built SOQ (Explorance Blue) dashboards, automated ETL merges (Banner ↔ Blue), managed survey deployments, and partnered with deans to interpret response trends.</p>
-        <ul class="bullets">
-          <li>Power BI KPI tiles, drill-through navigation, and DAX measures for term-over-term analysis.</li>
-          <li>Python ETL with validation & deduping for reliable nightly refreshes.</li>
-          <li>Canvas data integration for unified analytics across divisions.</li>
-        </ul>
       </div>
       <div class="t-item glass">
         <div class="t-meta">
           <h3>Research & Data Roles — Indiana University</h3>
           <span>2021–2024 • Bloomington, IN</span>
         </div>
-        <p>Python/SQL data wrangling, reproducible pipelines, and presentation-ready reports for academic analytics initiatives.</p>
+        <p>Python and SQL data wrangling, statistical reporting, and reproducible pipelines for academic analytics initiatives.</p>
       </div>
       <div class="t-item glass">
         <div class="t-meta">
@@ -131,13 +135,6 @@
   <!-- SKILLS -->
   <section id="skills" class="section reveal">
     <h2>Skills</h2>
-    <div class="marquee">
-      <div class="marquee-track">
-        <span>Python</span><span>pandas</span><span>SQL</span><span>Power BI</span><span>DAX</span>
-        <span>ServiceNow</span><span>Canvas</span><span>ETL</span><span>APIs</span><span>JS</span>
-        <span>Automation</span><span>Visualization</span>
-      </div>
-    </div>
     <ul class="chip-grid">
       <li class="chip tilt">Python</li>
       <li class="chip tilt">pandas</li>
@@ -166,39 +163,39 @@
       </div>
     </div>
 
-    <div class="grid" id="projectGrid">
-      <article class="card tilt" data-tags="dashboard">
+    <div class="grid">
+      <article class="card tilt shine" data-tags="dashboard">
         <img src="assets/project1.jpg" alt="SOQ analytics dashboard preview" />
         <div class="card-body">
           <h3>SOQ Analytics Dashboard</h3>
-          <p>Division KPI tracking, response rates by modality, core question trends, and drill-through pages.</p>
+          <p>Division KPI tracking, response rates by modality, trend lines, and drill-through pages for deans.</p>
           <div class="tags"><span>Power BI</span><span>DAX</span><span>Explorance Blue</span></div>
         </div>
       </article>
 
-      <article class="card tilt" data-tags="etl api">
+      <article class="card tilt shine" data-tags="etl api">
         <img src="assets/project2.jpg" alt="ETL automation pipeline preview" />
         <div class="card-body">
           <h3>ETL Automation Pipeline</h3>
-          <p>Python pipeline merging Banner + Blue with validation, dedupe, quality checks, and scheduled exports.</p>
-          <div class="tags"><span>Python</span><span>pandas</span><span>Airflow-ish</span></div>
+          <p>Python pipeline merging Banner + Blue with validation, dedupe, data quality checks, and scheduled exports.</p>
+          <div class="tags"><span>Python</span><span>pandas</span><span>Scheduling</span></div>
         </div>
       </article>
 
-      <article class="card tilt" data-tags="api">
+      <article class="card tilt shine" data-tags="api">
         <img src="assets/project3.jpg" alt="Canvas API integration preview" />
         <div class="card-body">
           <h3>Canvas Data Integration</h3>
-          <p>REST tool to sync courses/instructors into an analytics warehouse powering BI dashboards and reports.</p>
+          <p>Nightly REST sync → canonical warehouse tables → BI dashboards and operational reports.</p>
           <div class="tags"><span>REST</span><span>Auth</span><span>Canvas</span></div>
         </div>
       </article>
 
-      <article class="card tilt" data-tags="dashboard">
+      <article class="card tilt shine" data-tags="dashboard">
         <img src="assets/project4.jpg" alt="Admin operations dashboard preview" />
         <div class="card-body">
           <h3>Admin Ops Dashboard</h3>
-          <p>Operational KPIs, SLA health, alerting tiles, and role-based views for different stakeholders.</p>
+          <p>Operational KPIs, SLA health, alert tiles, and role-based views for directors and analysts.</p>
           <div class="tags"><span>Power BI</span><span>Automation</span></div>
         </div>
       </article>
@@ -212,17 +209,17 @@
       <details class="case glass">
         <summary><b>Boosting SOQ Response Rates</b> — division dashboards & nudges</summary>
         <div class="case-body">
-          <p><b>Context:</b> Participation varied by modality/part-of-term.</p>
-          <p><b>Solution:</b> Response-rate dashboards with division/department/instructor slicers; automated reminders with deep links.</p>
-          <p><b>Impact:</b> +12–18% response rate in targeted cohorts; faster end-of-term insights.</p>
+          <p><b>Context:</b> SOQ participation varied by modality and part-of-term.</p>
+          <p><b>Solution:</b> Built response dashboards with slicers for division/department/instructor; added automated reminder copy with deep links.</p>
+          <p><b>Impact:</b> +12–18% response rate in targeted cohorts; faster end-of-term insights for deans.</p>
         </div>
       </details>
       <details class="case glass">
         <summary><b>Canvas → Analytics</b> — nightly sync + warehouse schema</summary>
         <div class="case-body">
-          <p><b>Context:</b> Fragmented systems for courses & instructors.</p>
-          <p><b>Solution:</b> Python/REST sync process normalizing IDs/roles, writing canonical tables.</p>
-          <p><b>Impact:</b> Single source of truth for dashboards & audits.</p>
+          <p><b>Context:</b> Multiple systems tracked courses and instructors differently.</p>
+          <p><b>Solution:</b> Python/REST sync process normalizing IDs and roles, writing canonical tables.</p>
+          <p><b>Impact:</b> Reliable single-source-of-truth for downstream dashboards & audits.</p>
         </div>
       </details>
     </div>
