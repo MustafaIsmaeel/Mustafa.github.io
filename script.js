@@ -177,3 +177,38 @@ render();
 document.querySelector('.scroll-indicator')?.addEventListener('click', () => {
   document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
 });
+
+/***** TYPEWRITER SUBTITLE *****/
+const titles = [
+  "Data Engineering",
+  "Automation Architect",
+  "Visualization Designer",
+  "ETL Pipeline Builder",
+  "Power BI Developer"
+];
+let i = 0, j = 0, current = "", isDeleting = false;
+const el = document.getElementById("typed");
+
+function type() {
+  const full = titles[i];
+  if (isDeleting) {
+    current = full.substring(0, j--);
+  } else {
+    current = full.substring(0, j++);
+  }
+  el.textContent = current;
+
+  let speed = isDeleting ? 80 : 120;
+
+  if (!isDeleting && j === full.length) {
+    speed = 1600;            // pause before delete
+    isDeleting = true;
+  } else if (isDeleting && j === 0) {
+    isDeleting = false;
+    i = (i + 1) % titles.length;
+    speed = 500;             // pause before new word
+  }
+  setTimeout(type, speed);
+}
+type();
+
