@@ -1,34 +1,41 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mustafa Alsaegh | Portfolio</title>
-  <link rel="icon" href="assets/profile.png" type="image/png"/>
-  <link rel="stylesheet" href="style.css"/>
-  <!-- External libs (CDN) -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.3/umd/index.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.26/dist/lenis.min.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mustafa Alsaegh — Portfolio</title>
+  <meta name="description" content="Data Engineer & Developer — automation, ETL, Power BI, Canvas/ServiceNow integrations." />
+  <link rel="icon" href="assets/profile.png" type="image/png" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="style.css" />
 
+  <!-- Animation & 3D libs (via CDN) -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r155/three.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/split-type@0.3.3/umd/index.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.26/dist/lenis.min.js"></script>
 </head>
+
 <body>
   <!-- 3D background -->
-  <canvas id="scene"></canvas>
+  <canvas id="scene" aria-hidden="true"></canvas>
 
-  <!-- Nav -->
+  <!-- Cursor aura -->
+  <div id="cursor" aria-hidden="true"></div>
+
+  <!-- Top Nav -->
   <header class="navbar glass">
-    <a class="logo" href="#hero">Mustafa<span>.dev</span></a>
-    <nav>
+    <a class="logo" href="#hero" aria-label="Go to top">Mustafa<span>.dev</span></a>
+    <nav class="navlinks" aria-label="Main">
       <a href="#about">About</a>
       <a href="#projects">Projects</a>
       <a href="#skills">Skills</a>
       <a href="#contact">Contact</a>
-      <button id="themeToggle" aria-label="Toggle theme" class="btn-icon" title="Toggle theme">
-        <span class="sun">☀</span><span class="moon">🌙</span>
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme">
+        <span class="sun" aria-hidden="true">☀</span>
+        <span class="moon" aria-hidden="true">🌙</span>
       </button>
     </nav>
   </header>
@@ -38,22 +45,22 @@
     <div class="hero-inner">
       <h1 class="title">
         <span class="title-line">Hey, I’m <b>Mustafa</b>.</span>
-        <span class="title-line neon">Data Engineer • Automation • Visualization</span>
+        <span class="title-line neon">Automation • Data Engineering • Visualization</span>
       </h1>
       <p class="lead">
-        I build intelligent data systems—Python ETL, ServiceNow/Canvas integrations, and interactive Power BI experiences.
+        I build intelligent data systems — Python ETL, ServiceNow/Canvas integrations, and interactive Power BI experiences that turn raw data into real decisions.
       </p>
       <div class="cta-row">
         <a href="#projects" class="btn btn-primary magnet">Explore Work</a>
         <a href="mailto:malsaegh1@gmail.com" class="btn btn-ghost">Contact</a>
       </div>
       <div class="hero-stats">
-        <div class="stat glass tilt"><span>8+</span><small>Dashboards</small></div>
-        <div class="stat glass tilt"><span>50k+</span><small>Rows/ETL</small></div>
-        <div class="stat glass tilt"><span>API</span><small>Canvas/Blue</small></div>
+        <div class="stat glass tilt"><span>10+</span><small>Dashboards</small></div>
+        <div class="stat glass tilt"><span>100k+</span><small>Rows/ETL</small></div>
+        <div class="stat glass tilt"><span>APIs</span><small>Canvas/Blue</small></div>
       </div>
     </div>
-    <div class="scroll-indicator">Scroll</div>
+    <button class="scroll-indicator" aria-label="Scroll to content">Scroll</button>
   </section>
 
   <!-- About -->
@@ -61,7 +68,7 @@
     <h2>About</h2>
     <p>
       I turn messy, multi-source data into useful decisions. My stack: <b>Python</b> (pandas/ETL), <b>Power BI</b> (DAX/KPIs),
-      <b>ServiceNow/Canvas APIs</b>, and automation that keeps analytics fresh. I love clean UX and performance-minded JS.
+      <b>ServiceNow & Canvas APIs</b>, and automation that keeps analytics fresh. I care about clean UX, performance, and clear storytelling.
     </p>
   </section>
 
@@ -80,39 +87,39 @@
     </ul>
   </section>
 
-  <!-- Projects with filters -->
+  <!-- Projects -->
   <section id="projects" class="section glass reveal">
     <div class="section-head">
       <h2>Projects</h2>
-      <div class="filters">
-        <button class="filter active" data-filter="all">All</button>
-        <button class="filter" data-filter="dashboard">Dashboards</button>
-        <button class="filter" data-filter="etl">ETL</button>
-        <button class="filter" data-filter="api">APIs</button>
+      <div class="filters" role="tablist" aria-label="Project filters">
+        <button class="filter active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button class="filter" data-filter="dashboard" role="tab">Dashboards</button>
+        <button class="filter" data-filter="etl" role="tab">ETL</button>
+        <button class="filter" data-filter="api" role="tab">APIs</button>
       </div>
     </div>
 
     <div class="grid">
       <article class="card tilt" data-tags="dashboard">
-        <img src="assets/project1.jpg" alt="SOQ Dashboard"/>
+        <img src="assets/project1.jpg" alt="SOQ analytics dashboard preview" />
         <div class="card-body">
           <h3>SOQ Analytics Dashboard</h3>
-          <p>Division-level KPI tracking, response rates, and core question trends with slicers.</p>
+          <p>Division KPI tracking, response rates, and core question trends with slicers.</p>
           <div class="tags"><span>Power BI</span><span>DAX</span></div>
         </div>
       </article>
 
       <article class="card tilt" data-tags="etl api">
-        <img src="assets/project2.jpg" alt="ETL Automation"/>
+        <img src="assets/project2.jpg" alt="ETL automation pipeline preview" />
         <div class="card-body">
           <h3>ETL Automation Pipeline</h3>
-          <p>Python pipeline merging Banner + Blue; validation, dedupe, and scheduled exports.</p>
+          <p>Python pipeline merging Banner + Blue with validation, dedupe, and scheduled exports.</p>
           <div class="tags"><span>Python</span><span>pandas</span></div>
         </div>
       </article>
 
       <article class="card tilt" data-tags="api">
-        <img src="assets/project3.jpg" alt="Canvas Tool"/>
+        <img src="assets/project3.jpg" alt="Canvas API integration preview" />
         <div class="card-body">
           <h3>Canvas Data Integration</h3>
           <p>Canvas API sync for courses/instructors → analytics warehouse for dashboards.</p>
@@ -121,7 +128,7 @@
       </article>
 
       <article class="card tilt" data-tags="dashboard">
-        <img src="assets/project4.jpg" alt="Admin Ops Dashboard"/>
+        <img src="assets/project4.jpg" alt="Admin operations dashboard preview" />
         <div class="card-body">
           <h3>Admin Ops Dashboard</h3>
           <p>Operational KPIs, alerts, and SLA health with drill-through details.</p>
@@ -146,6 +153,6 @@
     © <span id="y"></span> Mustafa Alsaegh — Built with ❤️, GSAP, Three.js & VanillaTilt
   </footer>
 
-  <script src="script.js" defer></script>
+  <script defer src="script.js"></script>
 </body>
 </html>
