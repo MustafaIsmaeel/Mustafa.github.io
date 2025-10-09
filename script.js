@@ -34,7 +34,7 @@ document.querySelectorAll('.magnet').forEach(btn => {
   });
 });
 
-/***** VANILLA TILT (3D tilt on cards/chips/stats & portrait) *****/
+/***** VANILLA TILT (3D tilt) *****/
 const tiltEls = document.querySelectorAll('.tilt, .card, .chip');
 if (tiltEls.length) {
   VanillaTilt.init(tiltEls, { max: 10, speed: 700, glare: true, 'max-glare': 0.18, gyroscope: true });
@@ -65,26 +65,15 @@ const titles = [
 ];
 let i = 0, j = 0, current = "", isDeleting = false;
 const el = document.getElementById("typed");
-
 function type() {
   const full = titles[i];
-  if (isDeleting) {
-    current = full.substring(0, j--);
-  } else {
-    current = full.substring(0, j++);
-  }
+  if (isDeleting) current = full.substring(0, j--);
+  else current = full.substring(0, j++);
   el.textContent = current;
 
-  let speed = isDeleting ? 80 : 120;
-
-  if (!isDeleting && j === full.length) {
-    speed = 1600;            // pause before delete
-    isDeleting = true;
-  } else if (isDeleting && j === 0) {
-    isDeleting = false;
-    i = (i + 1) % titles.length;
-    speed = 500;             // pause before new word
-  }
+  let speed = isDeleting ? 75 : 115;
+  if (!isDeleting && j === full.length) { speed = 1400; isDeleting = true; }
+  else if (isDeleting && j === 0) { isDeleting = false; i = (i + 1) % titles.length; speed = 500; }
   setTimeout(type, speed);
 }
 type();
@@ -93,19 +82,14 @@ type();
 gsap.registerPlugin(ScrollTrigger);
 new window.SplitType('.title-line', { types: 'chars,words' });
 gsap.from('.hero-photo', { scale: 0, opacity: 0, duration: 1.1, ease: 'back.out(1.8)' });
-gsap.from('.char', {
-  y: 80, rotateX: -90, opacity: 0, duration: 1.1, stagger: 0.02, ease: 'back.out(1.7)', delay: 0.1
-});
+gsap.from('.char', { y: 80, rotateX: -90, opacity: 0, duration: 1.1, stagger: 0.02, ease: 'back.out(1.7)', delay: 0.1 });
 gsap.from('.lead', { opacity: 0, y: 30, duration: 0.6, delay: 0.35 });
 gsap.from('.cta-row .btn', { opacity: 0, y: 24, stagger: 0.08, duration: 0.5, delay: 0.45 });
 gsap.from('.stat', { opacity: 0, scale: 0.85, duration: 0.7, stagger: 0.08, ease: 'power2.out', delay: 0.6 });
 
 /***** SECTION REVEALS *****/
 gsap.utils.toArray('.reveal').forEach(elm => {
-  gsap.to(elm, {
-    opacity: 1, y: 0, duration: .8, ease: 'power3.out',
-    scrollTrigger: { trigger: elm, start: 'top 85%' }
-  });
+  gsap.to(elm, { opacity: 1, y: 0, duration: .8, ease: 'power3.out', scrollTrigger: { trigger: elm, start: 'top 85%' } });
 });
 
 /***** NAV DARKEN ON SCROLL *****/
@@ -175,7 +159,7 @@ const pCam = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 1, 1000);
 pCam.position.z = 400;
 
 const pGeo = new THREE.BufferGeometry();
-const pCount = 1000; // keep performant
+const pCount = 1100; // stays performant
 const pPos = new Float32Array(pCount * 3);
 for (let i = 0; i < pCount * 3; i++) pPos[i] = (Math.random() - 0.5) * 900;
 pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
@@ -206,7 +190,6 @@ function render(){
   requestAnimationFrame(render);
   uniforms.u_time.value = (performance.now() - start) / 1000;
 
-  // gentle particle rotation for "flying" feel
   points.rotation.x += 0.0006;
   points.rotation.y += 0.001;
 
@@ -217,8 +200,14 @@ function render(){
 }
 render();
 
-/***** ACCESSIBILITY / SMALL UX *****/
-// Scroll indicator → About
+/***** RESUME MODAL *****/
+const modal = document.getElementById('resumeModal');
+const openBtn = document.getElementById('openResume');
+const closeBtn = document.getElementById('closeResume');
+openBtn?.addEventListener('click', () => modal?.showModal());
+closeBtn?.addEventListener('click', () => modal?.close());
+
+/***** UX: Scroll indicator -> About *****/
 document.querySelector('.scroll-indicator')?.addEventListener('click', () => {
   document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
 });
