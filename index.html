@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mustafa Alsaegh — Portfolio</title>
-  <meta name="description" content="Mustafa Alsaegh — Automation • Data Engineering • Visualization. Python ETL, Canvas/ServiceNow, Power BI." />
+  <meta name="description" content="Automation • Data Engineering • Visualization — Python ETL, Canvas/ServiceNow, Power BI." />
   <link rel="icon" href="assets/mustafa.jpg" type="image/jpeg" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="style.css" />
@@ -37,7 +37,7 @@
       <a href="#certs">Certs</a>
       <a href="#testimonials">Testimonials</a>
       <a href="#contact">Contact</a>
-      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme">
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme" title="Theme">
         <span class="sun" aria-hidden="true">☀</span>
         <span class="moon" aria-hidden="true">🌙</span>
       </button>
@@ -89,8 +89,8 @@
     <h2>About</h2>
     <p>
       I specialize in turning multi-source, messy institutional datasets into clean pipelines and clear analytics. I’ve built
-      **Explorance Blue** survey dashboards for leadership, automated **Canvas** & **ServiceNow** data flows, and delivered
-      **Power BI** experiences that make decisions faster. I care about data integrity, accessibility, and telling the story
+      <b>Explorance Blue</b> survey dashboards for leadership, automated <b>Canvas</b> & <b>ServiceNow</b> data flows, and delivered
+      <b>Power BI</b> experiences that make decisions faster. I care about data integrity, accessibility, and telling the story
       behind the numbers.
     </p>
   </section>
@@ -105,13 +105,18 @@
           <span>2024–Present • Ann Arbor, MI</span>
         </div>
         <p>Built SOQ (Explorance Blue) dashboards, automated ETL merges (Banner ↔ Blue), managed survey deployments, and partnered with deans to interpret response trends.</p>
+        <ul class="bullets">
+          <li>Power BI KPI tiles, drill-through navigation, and DAX measures for term-over-term analysis.</li>
+          <li>Python ETL with validation & deduping for reliable nightly refreshes.</li>
+          <li>Canvas data integration for unified analytics across divisions.</li>
+        </ul>
       </div>
       <div class="t-item glass">
         <div class="t-meta">
-          <h3>Research & Data Roles</h3>
-          <span>2021–2024 • Indiana University</span>
+          <h3>Research & Data Roles — Indiana University</h3>
+          <span>2021–2024 • Bloomington, IN</span>
         </div>
-        <p>Python and SQL data wrangling, statistical reporting, and building reproducible pipelines for academic analytics initiatives.</p>
+        <p>Python/SQL data wrangling, reproducible pipelines, and presentation-ready reports for academic analytics initiatives.</p>
       </div>
       <div class="t-item glass">
         <div class="t-meta">
@@ -126,6 +131,13 @@
   <!-- SKILLS -->
   <section id="skills" class="section reveal">
     <h2>Skills</h2>
+    <div class="marquee">
+      <div class="marquee-track">
+        <span>Python</span><span>pandas</span><span>SQL</span><span>Power BI</span><span>DAX</span>
+        <span>ServiceNow</span><span>Canvas</span><span>ETL</span><span>APIs</span><span>JS</span>
+        <span>Automation</span><span>Visualization</span>
+      </div>
+    </div>
     <ul class="chip-grid">
       <li class="chip tilt">Python</li>
       <li class="chip tilt">pandas</li>
@@ -154,7 +166,7 @@
       </div>
     </div>
 
-    <div class="grid">
+    <div class="grid" id="projectGrid">
       <article class="card tilt" data-tags="dashboard">
         <img src="assets/project1.jpg" alt="SOQ analytics dashboard preview" />
         <div class="card-body">
@@ -198,19 +210,19 @@
     <h2>Case Studies</h2>
     <div class="cases">
       <details class="case glass">
-        <summary><b>Boosting SOQ Response Rates</b> — division-wide dashboards & nudges</summary>
+        <summary><b>Boosting SOQ Response Rates</b> — division dashboards & nudges</summary>
         <div class="case-body">
-          <p><b>Context:</b> SOQ participation varied by modality and part-of-term.</p>
-          <p><b>Solution:</b> Built response-rate dashboards with slicers for division/department/instructor; added automated reminder copy with deep links.</p>
-          <p><b>Impact:</b> +12–18% response rate in targeted cohorts; faster end-of-term insights for deans.</p>
+          <p><b>Context:</b> Participation varied by modality/part-of-term.</p>
+          <p><b>Solution:</b> Response-rate dashboards with division/department/instructor slicers; automated reminders with deep links.</p>
+          <p><b>Impact:</b> +12–18% response rate in targeted cohorts; faster end-of-term insights.</p>
         </div>
       </details>
       <details class="case glass">
         <summary><b>Canvas → Analytics</b> — nightly sync + warehouse schema</summary>
         <div class="case-body">
-          <p><b>Context:</b> Multiple systems tracked courses and instructors differently.</p>
-          <p><b>Solution:</b> Built a Python/REST sync process normalizing IDs and roles, writing canonical tables.</p>
-          <p><b>Impact:</b> Reliable single-source-of-truth for downstream dashboards & audits.</p>
+          <p><b>Context:</b> Fragmented systems for courses & instructors.</p>
+          <p><b>Solution:</b> Python/REST sync process normalizing IDs/roles, writing canonical tables.</p>
+          <p><b>Impact:</b> Single source of truth for dashboards & audits.</p>
         </div>
       </details>
     </div>
