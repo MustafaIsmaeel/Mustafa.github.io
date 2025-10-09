@@ -171,6 +171,30 @@ function render(){
   renderer.render(scene, camera);
 }
 render();
+/***** OVERLAY FLYING PARTICLES *****/
+const pScene = new THREE.Scene();
+const pCamera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 1, 1000);
+pCamera.position.z = 400;
+
+const pGeo = new THREE.BufferGeometry();
+const pCount = 800;
+const pos = new Float32Array(pCount * 3);
+for (let i = 0; i < pCount * 3; i++) pos[i] = (Math.random() - 0.5) * 800;
+pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+const pMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.6, opacity: 0.5, transparent: true });
+const points = new THREE.Points(pGeo, pMat);
+pScene.add(points);
+
+function renderParticles() {
+  points.rotation.x += 0.0006;
+  points.rotation.y += 0.001;
+  renderer.autoClear = false;
+  renderer.clear();
+  renderer.render(scene, camera);     // shader plane
+  renderer.render(pScene, pCamera);   // particles
+  requestAnimationFrame(renderParticles);
+}
+renderParticles();
 
 /***** ACCESSIBILITY / SMALL UX *****/
 // Scroll indicator → About
