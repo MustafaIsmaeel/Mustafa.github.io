@@ -1,86 +1,78 @@
 /* THEME */
-html{
-  --bg:#070b12; --panel:rgba(255,255,255,.06); --border:rgba(255,255,255,.14);
-  --text:#eaf1fb; --muted:#a5b2c7; --primary:#00e7ff; --accent:#ff3db3;
-  --ring:rgba(0,231,255,.5); --shadow:0 18px 48px -18px rgba(0,0,0,.55);
-}
-html[data-theme="light"]{
-  --bg:#f7f9fc; --panel:rgba(0,0,0,.04); --border:rgba(0,0,0,.12);
-  --text:#0c1220; --muted:#4c5a70; --primary:#006eff; --accent:#ff2e7a;
-  --ring:rgba(0,110,255,.25); --shadow:0 18px 48px -18px rgba(0,0,0,.18);
-}
+html{ --bg:#070b12; --panel:rgba(255,255,255,.06); --border:rgba(255,255,255,.14);
+      --text:#eaf1fb; --muted:#a5b2c7; --primary:#00e7ff; --accent:#ff3db3; --ring:rgba(0,231,255,.5);
+      --shadow:0 18px 48px -18px rgba(0,0,0,.55) }
+html[data-theme="light"]{ --bg:#f7f9fc; --panel:rgba(0,0,0,.04); --border:rgba(0,0,0,.12);
+      --text:#0c1220; --muted:#4c5a70; --primary:#006eff; --accent:#ff2e7a; --ring:rgba(0,110,255,.25);
+      --shadow:0 18px 48px -18px rgba(0,0,0,.18) }
 
-/* BASE */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  color:var(--text); background:var(--bg); overflow-x:hidden;
-}
-#bg,#net,#ribbon{position:fixed; inset:0; z-index:-999; display:block}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color:var(--text); background:var(--bg); overflow-x:hidden}
+
+/* canvases */
+#bg,#net,#ribbon{position:fixed; inset:0; z-index:-999}
 #net{z-index:-998; pointer-events:none}
 #ribbon{z-index:-997; pointer-events:none}
 
-/* Scroll progress */
+/* Intro splash */
+#intro{position:fixed; inset:0; background:radial-gradient(900px 600px at 70% -20%, rgba(0,231,255,.08), transparent), radial-gradient(700px 500px at 10% -10%, rgba(255,61,179,.08), transparent), var(--bg); display:grid; place-items:center; z-index:1200}
+.intro-core{position:relative; display:grid; place-items:center; gap:12px}
+.intro-logo{font-weight:1000; letter-spacing:.3px; font-size:2rem}
+.intro-logo span{color:var(--primary)}
+.intro-ring{position:absolute; border-radius:50%; border:1px dashed var(--ring); mix-blend-mode:screen}
+.r1{width:120px;height:120px; animation:spin 8s linear infinite}
+.r2{width:180px;height:180px; animation:spin 12s linear infinite reverse}
+.r3{width:240px;height:240px; animation:spin 16s linear infinite}
+.intro-tip{color:var(--muted); font-size:.95rem; margin-top:70px; text-transform:uppercase; letter-spacing:.2em}
+
+/* Progress bar */
 #scrollbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--primary), var(--accent)); z-index:1000; box-shadow:0 0 16px rgba(0,231,255,.6)}
 
-/* Page portal */
+/* Portal */
 #transition{position:fixed; inset:0; pointer-events:none; z-index:1100; opacity:0}
 
-/* Cursor fx */
-#cursor{
-  position:fixed; width:28px; height:28px; border-radius:50%;
-  background:radial-gradient(circle at 30% 30%, var(--accent), transparent 60%);
-  mix-blend-mode:screen; pointer-events:none; z-index:999; opacity:.9;
-  transform:translate(-50%,-50%); filter:blur(1.5px);
-}
-#trail{
-  position:fixed; inset:0; z-index:-996; pointer-events:none;
-  background:
-    radial-gradient(400px 300px at var(--tx,-100px) var(--ty,-100px), rgba(255,61,179,.10), transparent 60%),
-    radial-gradient(350px 250px at calc(var(--tx,-100px) - 80px) calc(var(--ty,-100px) + 60px), rgba(0,231,255,.10), transparent 60%);
-  transition:background-position .12s ease;
-}
+/* Cursor comet */
+#cursor{position:fixed; width:28px; height:28px; border-radius:50%; background:radial-gradient(circle at 30% 30%, var(--accent), transparent 60%); mix-blend-mode:screen; pointer-events:none; z-index:999; opacity:.95; transform:translate(-50%,-50%); filter:blur(1.5px)}
+#trail{position:fixed; inset:0; z-index:-996; pointer-events:none; background:radial-gradient(400px 300px at var(--tx,-100px) var(--ty,-100px), rgba(255,61,179,.10), transparent 60%), radial-gradient(350px 250px at calc(var(--tx,-100px) - 80px) calc(var(--ty,-100px) + 60px), rgba(0,231,255,.10), transparent 60%); transition:background-position .12s ease}
+#beam{position:fixed; height:2px; width:120px; background:linear-gradient(90deg, rgba(0,231,255,.28), rgba(255,61,179,.28)); border-radius:4px; filter:blur(1px); pointer-events:none; z-index:998; transform-origin:left center; mix-blend-mode:screen; opacity:.6}
 
 /* Glass + layout */
 .glass{background:var(--panel); border:1px solid var(--border); backdrop-filter:saturate(130%) blur(12px); -webkit-backdrop-filter:saturate(130%) blur(12px); border-radius:16px}
-
-/* Navbar */
 .navbar{position:sticky; top:0; z-index:50; margin:12px; padding:10px 16px; display:flex; align-items:center; justify-content:space-between}
-.logo{font-weight:900; letter-spacing:.2px; text-decoration:none; color:var(--text)}
-.logo span{color:var(--primary)}
-.navlinks{display:flex; align-items:center; gap:16px}
-.navlinks a{color:var(--muted); text-decoration:none; padding:.45rem .6rem; border-radius:10px; transition:.2s}
+.logo{font-weight:900; letter-spacing:.2px; text-decoration:none; color:var(--text)} .logo span{color:var(--primary)}
+.navlinks{display:flex; align-items:center; gap:16px; position:relative}
+.navlinks a{color:var(--muted); text-decoration:none; padding:.45rem .6rem; border-radius:10px; transition:.2s; position:relative}
 .navlinks a:hover{color:var(--text); background:var(--panel); border:1px solid var(--border)}
+/* magnetic underline */
+.navlinks::after{content:""; position:absolute; height:2px; background:linear-gradient(90deg,var(--primary),var(--accent)); width:0; left:0; bottom:2px; border-radius:2px; transition:transform .2s,width .2s, left .2s}
 .btn-icon{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); background:var(--panel); color:var(--text); border-radius:12px; padding:.45rem .6rem; cursor:pointer}
-.btn-icon .sun{display:none}
-html[data-theme="light"] .btn-icon .sun{display:inline} html[data-theme="light"] .btn-icon .moon{display:none}
+.btn-icon .sun{display:none} html[data-theme="light"] .btn-icon .sun{display:inline} html[data-theme="light"] .btn-icon .moon{display:none}
 
 /* Hero */
 .viewport{min-height:92vh; display:grid; place-items:center; padding:90px 16px}
 .hero-inner{max-width:1200px; text-align:center}
 .hero-top{display:flex; flex-wrap:wrap; gap:20px; align-items:center; justify-content:center}
 .hero-photo{position:relative; width:260px; height:260px; display:grid; place-items:center}
-.hero-photo img{width:200px; height:200px; border-radius:50%; border:3px solid var(--primary); box-shadow:0 0 25px rgba(0,231,255,.45); animation:float 6s ease-in-out infinite}
-.blob{position:absolute; width:260px; height:260px; border-radius:50%; background:conic-gradient(from 0deg, var(--accent), transparent 40%, var(--primary), transparent 70%); filter:blur(26px); opacity:.55; animation:blob 12s ease-in-out infinite alternate}
-.ring{position:absolute; border-radius:50%; pointer-events:none; border:1px dashed var(--ring); mix-blend-mode:screen; animation:spin 12s linear infinite}
-.ring1{width:240px; height:240px; animation-duration:18s}
-.ring2{width:280px; height:280px; animation-direction:reverse; animation-duration:24s}
-@keyframes blob{0%{transform:scale(1) rotate(0)}100%{transform:scale(1.15) rotate(35deg)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-@keyframes spin{to{transform:rotate(360deg)}}
+.morph{position:absolute; inset:0; transform:scale(1.05); z-index:1}
+.hero-photo img{position:relative; z-index:2; width:200px; height:200px; object-fit:cover; border-radius:50%; border:3px solid var(--primary); box-shadow:0 0 25px rgba(0,231,255,.55); animation:float 6s ease-in-out infinite}
+.ring{position:absolute; border-radius:50%; pointer-events:none; border:2px solid transparent; z-index:0}
+.ring1,.ring2{inset:-6px; border-image:conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary)) 1; animation:spin 12s linear infinite; opacity:.7}
+.ring2{inset:-16px; animation-direction:reverse; animation-duration:24s; opacity:.45}
+
+/* Orbiting emoji tech sparks */
+.orbit{position:absolute; inset:0; list-style:none; margin:0; padding:0; pointer-events:none}
+.orbit li{position:absolute; left:50%; top:50%; transform-origin:-100px 0; animation:orbit 10s linear infinite; filter:drop-shadow(0 0 6px rgba(255,255,255,.5))}
+@keyframes orbit{to{transform:rotate(360deg)}}
 
 .title{font-size:clamp(2rem,3.8vw,3.4rem); line-height:1.2; margin:10px 0 10px; position:relative}
 .title b{color:var(--primary)}
 .spark{position:absolute; left:50%; transform:translateX(-50%); width:70%; color:var(--accent); opacity:.0}
 
-/* Typewriter */
 .typed-line{font-size:1.4rem; color:var(--accent); margin:.6rem 0 0; font-weight:800; min-height:2rem}
 .cursor-blink{display:inline-block; animation:blink 1s step-start infinite}
 @keyframes blink{50%{opacity:0}}
 .lead{color:var(--muted); max-width:860px; margin:10px auto 18px}
 
-/* CTA */
 .cta-row{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; margin:18px 0 28px}
 .btn{display:inline-flex; align-items:center; justify-content:center; min-height:48px; line-height:1; border-radius:14px; padding:0 1.15rem; text-decoration:none; font-weight:900; letter-spacing:.2px; position:relative; overflow:hidden}
 .btn-ghost{border:1px solid var(--border); color:var(--text); background:transparent}
@@ -97,13 +89,22 @@ html[data-theme="light"] .btn-icon .sun{display:inline} html[data-theme="light"]
 .stat small{color:var(--muted); margin-top:-8px}
 .scroll-indicator{border:none; background:transparent; color:var(--muted); margin-top:18px; animation:bob 1.8s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* Sections */
-.section{max-width:1150px; margin:96px auto; padding:30px 18px}
+.section{max-width:1150px; margin:96px auto; padding:30px 18px; position:relative; overflow:clip}
 .section h2{margin:0 0 12px; font-size:1.95rem}
 .section p{color:var(--muted)}
 .headline{position:relative; display:inline-block}
 .headline::after{content:""; position:absolute; left:0; right:0; bottom:-6px; height:3px; border-radius:3px; background:linear-gradient(90deg, var(--primary), var(--accent)); transform:scaleX(0); transform-origin:left}
+
+/* Section ripple enter overlay */
+.section::before{
+  content:""; position:absolute; inset:auto auto 0 0; width:0; height:0; border-radius:50%;
+  background:radial-gradient(closest-side, rgba(0,231,255,.18), rgba(255,61,179,.18), transparent 70%);
+  transform:translate(-50%,-50%); opacity:0; pointer-events:none;
+}
 
 /* Timeline */
 .timeline{display:grid; gap:14px; margin-top:10px}
@@ -125,13 +126,14 @@ html[data-theme="light"] .btn-icon .sun{display:inline} html[data-theme="light"]
 .card{position:relative; overflow:hidden; border-radius:16px; border:1px solid var(--border); background:var(--panel); transition:transform .3s, box-shadow .3s; box-shadow:var(--shadow); display:flex; flex-direction:column; will-change:transform}
 .img-wrap{position:relative; overflow:hidden}
 .img-wrap img{width:100%; height:190px; object-fit:cover; display:block; filter:saturate(1.08) contrast(1.05)}
+/* Liquid hover using SVG filter */
+.liquid:hover img{filter:url(#liquid)}
 .card-body{padding:14px; display:flex; flex-direction:column; gap:8px; flex:1}
 .card h3{margin:4px 0 0}
 .card p{color:var(--muted); margin:0}
 .tags{margin-top:auto; display:flex; gap:6px; flex-wrap:wrap}
 .tags span{font-size:.78rem; border:1px solid var(--border); background:rgba(255,255,255,.04); padding:.25rem .45rem; border-radius:8px}
 .card:hover{transform:translateY(-4px) scale(1.01)}
-/* Card shine */
 .shine::before{content:""; position:absolute; inset:-200% -50% auto -50%; height:200%; transform:rotate(20deg); background:linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent); opacity:0; transition:opacity .3s}
 .shine:hover::before{opacity:.8; animation:shineSwipe 1s ease}
 @keyframes shineSwipe{to{transform:translateX(200%) rotate(20deg)}}
@@ -144,8 +146,9 @@ html[data-theme="light"] .btn-icon .sun{display:inline} html[data-theme="light"]
 .resume-modal iframe{width:100%; height:70vh; border:0}
 .resume-actions{display:flex; justify-content:flex-end; gap:10px; padding:14px 16px; border-top:1px solid var(--border)}
 
-/* Performance */
-.card, .hero-photo, .hero-photo img, .ring, .blob { will-change: transform }
+/* perf hints */
+.card, .hero-photo, .hero-photo img, .ring, .morph path { will-change: transform }
+
 @media (max-width:520px){ .cta-row .btn{ flex:1 1 100% } }
 @media (max-width:920px){ .navlinks a:nth-child(n+6){display:none} }
 @media (max-width:760px){ .navlinks a{display:none} .navbar{padding:8px 12px} .hero-stats{gap:8px} }
