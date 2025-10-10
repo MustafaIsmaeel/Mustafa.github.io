@@ -14,7 +14,7 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 #bg,#net,#ribbon{position:fixed; inset:0; z-index:-999}
 #net{z-index:-998; pointer-events:none}
 #ribbon{z-index:-997; pointer-events:none}
-#rippleFx{position:fixed; inset:0; pointer-events:none; z-index:100; mix-blend-mode:screen}
+#rippleFx,#scrollFx{position:fixed; inset:0; pointer-events:none; z-index:100; mix-blend-mode:screen}
 
 /* Intro splash */
 #intro{position:fixed; inset:0; background:radial-gradient(900px 600px at 70% -20%, rgba(0,231,255,.08), transparent), radial-gradient(700px 500px at 10% -10%, rgba(255,61,179,.08), transparent), var(--bg); display:grid; place-items:center; z-index:1200}
@@ -69,31 +69,22 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
   box-shadow:0 6px 18px -10px rgba(0,231,255,.6);
   animation:navBreath 3s ease-in-out infinite;
 }
-.navlinks a::after{
-  content:""; position:absolute; left:12px; right:12px; bottom:6px; height:2px;
-  background:linear-gradient(90deg,var(--primary),var(--accent));
-  transform:scaleX(0); transform-origin:left; transition:transform .25s ease;
-}
-.navlinks a:hover::after{ transform:scaleX(1); }
-@keyframes navBreath{ 0%,100%{ box-shadow:0 0 0 rgba(0,231,255,0);} 50%{ box-shadow:0 0 24px rgba(0,231,255,.45);} }
+.navlinks a::after{content:""; position:absolute; left:12px; right:12px; bottom:6px; height:2px; background:linear-gradient(90deg,var(--primary),var(--accent)); transform:scaleX(0); transform-origin:left; transition:transform .25s ease}
+.navlinks a:hover::after{ transform:scaleX(1) }
+@keyframes navBreath{0%,100%{ box-shadow:0 0 0 rgba(0,231,255,0)} 50%{ box-shadow:0 0 24px rgba(0,231,255,.45)}}
 
 /* moving indicator */
-.nav-indicator{
-  position:absolute; bottom:2px; height:3px; width:0; border-radius:3px;
-  background:linear-gradient(90deg, var(--primary), var(--accent));
-  transition:transform .28s cubic-bezier(.22,.61,.36,1), width .28s cubic-bezier(.22,.61,.36,1);
-}
+.nav-indicator{ position:absolute; bottom:2px; height:3px; width:0; border-radius:3px; background:linear-gradient(90deg, var(--primary), var(--accent)); transition:transform .28s cubic-bezier(.22,.61,.36,1), width .28s cubic-bezier(.22,.61,.36,1) }
 
 /* Hide/reveal on scroll */
-.navbar.hide{ transform:translateY(-100%); transition:transform .35s ease; }
-.navbar.show{ transform:translateY(0); transition:transform .35s ease; }
-.navbar.scrolled .inner{ box-shadow:0 10px 26px -14px rgba(0,0,0,.45); }
+.navbar.hide{ transform:translateY(-100%); transition:transform .35s ease }
+.navbar.show{ transform:translateY(0); transition:transform .35s ease }
+.navbar.scrolled .inner{ box-shadow:0 10px 26px -14px rgba(0,0,0,.45) }
 
 /* Hero parallax lights */
 #heroLights{position:fixed; inset:0; pointer-events:none; z-index:-995}
-#heroLights .hl{position:absolute; width:40vw; height:40vw; border-radius:50%;
-  background:radial-gradient(circle at 50% 50%, rgba(0,231,255,.16), transparent 60%);}
-#heroLights .hl.b{background:radial-gradient(circle at 50% 50%, rgba(255,61,179,.16), transparent 60%);}
+#heroLights .hl{position:absolute; width:40vw; height:40vw; border-radius:50%; background:radial-gradient(circle at 50% 50%, rgba(0,231,255,.16), transparent 60%)}
+#heroLights .hl.b{background:radial-gradient(circle at 50% 50%, rgba(255,61,179,.16), transparent 60%)}
 
 /* Hero */
 .viewport{min-height:92vh; display:grid; place-items:center; padding:90px 16px}
@@ -118,7 +109,7 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 @keyframes orbit{to{transform:rotate(360deg)}}
 
 /* Particle name canvas */
-.name-fx{ position:relative; width:min(760px, 86vw); height:120px; }
+.name-fx{ position:relative; width:min(760px, 86vw); height:120px }
 #nameFx{ position:absolute; inset:0; width:100%; height:100%; z-index:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,.35)) }
 
 /* Title */
@@ -131,7 +122,7 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 @keyframes blink{50%{opacity:0}}
 .lead{color:var(--muted); max-width:860px; margin:10px auto 18px}
 
-/* CTA (high contrast) */
+/* CTA */
 .cta-row{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; margin:18px 0 28px}
 .btn{display:inline-flex; align-items:center; justify-content:center; min-height:48px; line-height:1; border-radius:14px; padding:0 1.15rem; text-decoration:none; font-weight:900; letter-spacing:.2px; position:relative; overflow:hidden; transform:translateZ(0)}
 .btn-ghost{border:1px solid var(--border); color:var(--text); background:rgba(0,0,0,.15)}
@@ -139,9 +130,9 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .btn-primary:hover{transform:translateY(-2px); box-shadow:0 22px 60px -14px rgba(0,231,255,.75), 0 0 22px rgba(255,61,179,.35)}
 .magnet::after{content:""; position:absolute; inset:auto -20% -120% -20%; height:200%; background:radial-gradient(140px 70px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.5), transparent 60%); transition:opacity .15s; opacity:0; pointer-events:none}
 .magnet:hover::after{opacity:.5}
-.btn:active{transform:scale(.97)} /* spring press */
+.btn:active{transform:scale(.97)}
 
-/* Stats + misc */
+/* Stats */
 .hero-stats{display:flex; justify-content:center; gap:12px; flex-wrap:wrap}
 .stat{display:grid; place-items:center; width:160px; height:110px; box-shadow:var(--shadow)}
 .stat span{font-size:1.8rem; font-weight:900}
@@ -159,13 +150,8 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .headline::after{content:""; position:absolute; left:0; right:0; bottom:-6px; height:3px; border-radius:3px; background:linear-gradient(90deg, var(--primary), var(--accent)); transform:scaleX(0); transform-origin:left}
 
 /* Section edge glow sweep */
-.section::after{
-  content:""; position:absolute; inset:-2px; pointer-events:none; border-radius:18px;
-  background:conic-gradient(from 0deg, transparent 0 20%, rgba(0,231,255,.10), rgba(255,61,179,.10), transparent 80% 100%);
-  filter:blur(10px); opacity:0; transform:scale(.98);
-  transition:opacity .6s ease, transform .6s ease;
-}
-.section.entered::after{ opacity:1; transform:scale(1); }
+.section::after{ content:""; position:absolute; inset:-2px; pointer-events:none; border-radius:18px; background:conic-gradient(from 0deg, transparent 0 20%, rgba(0,231,255,.10), rgba(255,61,179,.10), transparent 80% 100%); filter:blur(10px); opacity:0; transform:scale(.98); transition:opacity .6s ease, transform .6s ease }
+.section.entered::after{ opacity:1; transform:scale(1) }
 
 /* Timeline */
 .timeline{display:grid; gap:14px; margin-top:10px}
@@ -183,6 +169,10 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .filter{border:1px solid var(--border); background:var(--panel); color:var(--muted); padding:.6rem .9rem; border-radius:10px; cursor:pointer; font-weight:900}
 .filter.active, .filter:hover{color:var(--text); border-color:var(--primary)}
 
+.marquee{overflow:hidden; border-radius:12px; border:1px solid var(--border); background:linear-gradient(90deg, rgba(255,255,255,.04), rgba(0,0,0,.1))}
+.m-track{white-space:nowrap; font-weight:1000; letter-spacing:.15em; padding:.4rem .8rem; animation:mar 18s linear infinite; color:rgba(255,255,255,.35)}
+@keyframes mar{to{transform:translateX(-50%)}}
+
 .grid{display:grid; gap:18px; grid-template-columns:repeat(auto-fit, minmax(270px, 1fr)); align-items:stretch; margin-top:16px}
 .card{position:relative; overflow:hidden; border-radius:16px; border:1px solid var(--border); background:var(--panel); transition:transform .3s, box-shadow .3s; box-shadow:var(--shadow); display:flex; flex-direction:column; will-change:transform}
 .img-wrap{position:relative; overflow:hidden}
@@ -197,8 +187,6 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .shine::before{content:""; position:absolute; inset:-200% -50% auto -50%; height:200%; transform:rotate(20deg); background:linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent); opacity:0; transition:opacity .3s}
 .shine:hover::before{opacity:.8; animation:shineSwipe 1s ease}
 @keyframes shineSwipe{to{transform:translateX(200%) rotate(20deg)}}
-
-/* Sparkle emitter placeholder */
 .card .sparkles{position:absolute; inset:0; pointer-events:none}
 
 /* Footer & modal */
@@ -208,6 +196,18 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .resume-head{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border)}
 .resume-modal iframe{width:100%; height:70vh; border:0}
 .resume-actions{display:flex; justify-content:flex-end; gap:10px; padding:14px 16px; border-top:1px solid var(--border)}
+
+/* Gooey radial menu */
+#gooMenu{ position:fixed; right:22px; bottom:22px; z-index:2100; filter:url(#goo) }
+.goo-toggle{ width:58px;height:58px;border-radius:50%; border:none; cursor:pointer; font-size:20px; font-weight:900; color:#061217; box-shadow:0 22px 60px -16px rgba(0,0,0,.45);
+  background:linear-gradient(90deg, var(--primary), var(--accent)); }
+.goo-item{ position:absolute; width:44px;height:44px;border-radius:50%; display:grid;place-items:center; text-decoration:none; transform:translate(7px,7px) scale(.3); opacity:0; pointer-events:none;
+  background:var(--panel); border:1px solid var(--border); color:var(--text); }
+#gooMenu.open .goo-item{ opacity:1; pointer-events:auto }
+#gooMenu.open .goo-item:nth-of-type(2){ transform:translate(-66px,-10px) }
+#gooMenu.open .goo-item:nth-of-type(3){ transform:translate(-10px,-66px) }
+#gooMenu.open .goo-item:nth-of-type(4){ transform:translate(-98px,-68px) }
+#gooMenu.open .goo-item:nth-of-type(5){ transform:translate(-68px,-120px) }
 
 /* perf hints */
 .card, .hero-photo, .hero-photo img, .ring, .morph path { will-change: transform }
