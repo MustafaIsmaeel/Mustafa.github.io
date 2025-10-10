@@ -3,7 +3,7 @@
 /* YEAR */
 document.getElementById('y').textContent = new Date().getFullYear();
 
-/* THEME TOGGLE (confetti removed) */
+/* THEME TOGGLE (no confetti) */
 var root = document.documentElement;
 document.getElementById('themeToggle').addEventListener('click', function(){
   var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -53,7 +53,7 @@ addEventListener('mousemove', function(e){
   beam.style.transform = `translate(${mx-60}px,${my}px) rotate(${angle}rad)`;
 });
 
-/* ---- Smart navbar: hide on scroll down, show on scroll up; set active link + indicator ---- */
+/* ---- Smart navbar: hide on scroll down, show on scroll up; active link + indicator ---- */
 (function(){
   var nav = document.querySelector('.navbar'); if(!nav) return;
   var links = Array.from(document.querySelectorAll('.navlinks a[href^="#"]'));
@@ -135,8 +135,9 @@ document.querySelectorAll('[data-jump]').forEach(function(a){
 
 /* Resume modal */
 var modal = document.getElementById('resumeModal');
-document.getElementById('openResume')?.addEventListener('click', function(){ modal?.showModal(); });
+document.getElementById('openResume')?.addEventListener('click', function(){ modal?.showDialog ? modal.showDialog() : modal?.showModal(); });
 document.getElementById('closeResume')?.addEventListener('click', function(){ modal?.close(); });
+document.getElementById('fabResume')?.addEventListener('click', function(){ modal?.showModal(); });
 
 /* Scroll progress + ambient hue */
 var bar = document.getElementById('scrollbar');
@@ -234,7 +235,7 @@ window.VanillaTilt && VanillaTilt.init(document.querySelectorAll('.tilt, .chip')
   })();
 })();
 
-/* THREE.js nebula + starfield warp on fast scroll */
+/* THREE.js nebula + starfield warp on fast scroll + ripple pulse */
 (function(){
   if(!window.THREE) return; var canvas=document.getElementById('bg'); if(!canvas) return;
   var renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true}), scene=new THREE.Scene();
@@ -242,26 +243,33 @@ window.VanillaTilt && VanillaTilt.init(document.querySelectorAll('.tilt, .chip')
   var starGeo=new THREE.BufferGeometry(), count=2200, pos=new Float32Array(count*3); for(var i=0;i<count*3;i++) pos[i]=(Math.random()-.5)*1600;
   starGeo.setAttribute('position',new THREE.BufferAttribute(pos,3)); var starMat=new THREE.PointsMaterial({color:0xffffff,size:1.2,opacity:.55,transparent:true}); var stars=new THREE.Points(starGeo,starMat); scene.add(stars);
   var geo=new THREE.PlaneGeometry(2000,1200,1,1);
-  var frag=`precision highp float; uniform vec2 u_res; uniform float u_time; uniform vec2 u_mouse;
+  var frag=`precision highp float; uniform vec2 u_res; uniform float u_time; uniform vec2 u_mouse; uniform float u_pulse;
     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
     float noise(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);
       return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);}
     float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*noise(p);p*=2.1;a*=.52;}return v;}
-    void main(){vec2 uv=gl_FragCoord.xy/u_res.xy;vec2 p=(uv-.5)*vec2(u_res.x/u_res.y,1.);vec2 m=(u_mouse/u_res-.5)*0.8;float t=u_time*.05;float n=fbm(2.2*p+vec2(t,-t)+m*1.5);
-      vec3 col=mix(vec3(0.,.91,1.),vec3(1.,.24,.70),smoothstep(.25,.85,n));float v=smoothstep(1.,.2,length(p));col*=v;gl_FragColor=vec4(col,1.);} `;
+    void main(){
+      vec2 uv=gl_FragCoord.xy/u_res.xy; vec2 p=(uv-.5)*vec2(u_res.x/u_res.y,1.);
+      vec2 m=(u_mouse/u_res-.5)*0.8; float t=u_time*.05;
+      float ripple = sin(12.0*length(p) - u_time*10.0)*0.08*u_pulse;
+      p += normalize(p+0.0001)*ripple;
+      float n=fbm(2.2*p+vec2(t,-t)+m*1.5);
+      vec3 col=mix(vec3(0.,.91,1.),vec3(1.,.24,.70),smoothstep(.25,.85,n));
+      float v=smoothstep(1.,.2,length(p)); col*=v; gl_FragColor=vec4(col,1.);
+    }`;
   var vert=`void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} `;
-  var uniforms={u_res:{value:new THREE.Vector2(1,1)},u_time:{value:0},u_mouse:{value:new THREE.Vector2(-1e3,-1e3)}};
+  var uniforms={u_res:{value:new THREE.Vector2(1,1)},u_time:{value:0},u_mouse:{value:new THREE.Vector2(-1e3,-1e3)},u_pulse:{value:0}};
   var mat=new THREE.ShaderMaterial({uniforms,vertexShader:vert,fragmentShader:frag,transparent:true,depthWrite:false});
   var plane=new THREE.Mesh(geo,mat); plane.position.z=-200; scene.add(plane);
   function resize(){var dpr=Math.min(2,devicePixelRatio||1);renderer.setPixelRatio(dpr);renderer.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();uniforms.u_res.value.set(innerWidth*dpr,innerHeight*dpr);}
   addEventListener('resize',resize); resize(); addEventListener('mousemove',e=>uniforms.u_mouse.value.set(e.clientX,innerHeight-e.clientY));
-  var start=performance.now(), lastY=scrollY, vel=0;
-  addEventListener('scroll',function(){ var ny=scrollY; vel = Math.max(0, Math.min(1.2, Math.abs(ny-lastY)/140)); lastY=ny; });
+  var start=performance.now(), lastY=scrollY, vel=0, pulse=0;
+  addEventListener('scroll',function(){ var ny=scrollY; vel = Math.max(0, Math.min(1.2, Math.abs(ny-lastY)/140)); lastY=ny; pulse=1; });
   (function loop(){
     uniforms.u_time.value=(performance.now()-start)/1000;
     stars.rotation.x+=.0005; stars.rotation.y+=.0008;
-    starMat.size = 1.2 + vel*3.5; // warp on fast scroll
-    starMat.opacity = .45 + vel*.35;
+    starMat.size = 1.2 + vel*3.5; starMat.opacity = .45 + vel*.35;
+    pulse *= 0.94; uniforms.u_pulse.value = pulse; // decay ripple
     renderer.render(scene,cam); requestAnimationFrame(loop);
   })();
 })();
@@ -431,5 +439,52 @@ document.querySelector('.scroll-indicator')?.addEventListener('click', function(
   }
   addEventListener('mousemove', move); move({clientX:innerWidth/2, clientY:innerHeight/2});
 })();
+
+/* Meteors (ambient streaks) */
+(function(){
+  var c=document.getElementById('meteors'); if(!c) return; var ctx=c.getContext('2d'); var DPR=Math.min(2,devicePixelRatio||1);
+  function fit(){ c.width=innerWidth*DPR; c.height=innerHeight*DPR; c.style.width=innerWidth+'px'; c.style.height=innerHeight+'px'; ctx.setTransform(DPR,0,0,DPR,0,0);} fit(); addEventListener('resize',fit);
+  var mets=[];
+  function spawn(){ mets.push({x:Math.random()*innerWidth, y:-20, vx:2+Math.random()*3, vy:6+Math.random()*6, life:1}); }
+  setInterval(spawn, 1800);
+  (function loop(){
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+    for(var i=mets.length-1;i>=0;i--){
+      var m=mets[i]; m.x+=m.vx; m.y+=m.vy; m.life*=0.985;
+      ctx.strokeStyle=`rgba(255,255,255,${.55*m.life})`; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(m.x-18,m.y-12); ctx.lineTo(m.x+18,m.y+12); ctx.stroke();
+      if(m.y>innerHeight+30) mets.splice(i,1);
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* Gooey FAB */
+(function(){
+  var fab=document.getElementById('fab'), main=document.getElementById('fabMain'); if(!fab||!main) return;
+  var items=[].slice.call(fab.querySelectorAll('.fab-item'));
+  function layout(open){
+    var R=open?88:0, N=items.length;
+    items.forEach(function(el, idx){
+      var a = (-90 + (idx*(180/(N-1)))) * Math.PI/180; // semi-circle
+      var x = Math.cos(a)*R, y = Math.sin(a)*R;
+      el.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+    });
+  }
+  layout(false);
+  main.addEventListener('click', function(){
+    var open = !fab.classList.contains('open');
+    fab.classList.toggle('open', open);
+    main.setAttribute('aria-expanded', String(open));
+    layout(open);
+    main.animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:260});
+  });
+  document.getElementById('fabTop')?.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); fab.classList.remove('open'); main.setAttribute('aria-expanded','false'); layout(false); });
+})();
+
+/* Resize housekeeping for canvases */
+window.addEventListener('resize', function(){
+  var c = document.getElementById('rippleFx'); if(c){ var dpr=Math.min(2,devicePixelRatio||1); c.width=innerWidth*dpr; c.height=innerHeight*dpr; c.style.width=innerWidth+'px'; c.style.height=innerHeight+'px'; }
+});
 
 });
