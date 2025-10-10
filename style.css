@@ -10,15 +10,18 @@ html[data-theme="light"]{ --bg:#f7f9fc; --panel:rgba(0,0,0,.04); --border:rgba(0
 *{box-sizing:border-box} html,body{height:100%}
 body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color:var(--text); background:var(--bg); overflow-x:hidden; padding-top: calc(var(--nav-h) + 12px)}
 
-/* canvases */
+/* canvases / layers */
 #bg,#net,#ribbon{position:fixed; inset:0; z-index:-999}
 #net{z-index:-998; pointer-events:none}
 #ribbon{z-index:-997; pointer-events:none}
 #rippleFx{position:fixed; inset:0; pointer-events:none; z-index:100; mix-blend-mode:screen}
 #meteors{position:fixed; inset:0; pointer-events:none; z-index:-994; mix-blend-mode:screen}
 
+/* WebGL displacement transition canvas */
+#warp{position:fixed; inset:0; z-index:1500; pointer-events:none; opacity:0}
+
 /* Intro splash */
-#intro{position:fixed; inset:0; background:radial-gradient(900px 600px at 70% -20%, rgba(0,231,255,.08), transparent), radial-gradient(700px 500px at 10% -10%, rgba(255,61,179,.08), transparent), var(--bg); display:grid; place-items:center; z-index:1200}
+#intro{position:fixed; inset:0; background:radial-gradient(900px 600px at 70% -20%, rgba(0,231,255,.08), transparent), radial-gradient(700px 500px at 10% -10%, rgba(255,61,179,.08), transparent), var(--bg); display:grid; place-items:center; z-index:1600}
 .intro-core{position:relative; display:grid; place-items:center; gap:12px}
 .intro-logo{font-weight:1000; letter-spacing:.3px; font-size:2rem}
 .intro-logo span{color:var(--primary)}
@@ -29,72 +32,35 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .intro-tip{color:var(--muted); font-size:.95rem; margin-top:70px; text-transform:uppercase; letter-spacing:.2em}
 
 /* Progress bar */
-#scrollbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--primary), var(--accent)); z-index:1000; box-shadow:0 0 16px rgba(0,231,255,.6)}
-
-/* Portal */
-#transition{position:fixed; inset:0; pointer-events:none; z-index:1100; opacity:0}
+#scrollbar{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--primary), var(--accent)); z-index:1200; box-shadow:0 0 16px rgba(0,231,255,.6)}
 
 /* Cursor comet */
 #cursor{position:fixed; width:28px; height:28px; border-radius:50%; background:radial-gradient(circle at 30% 30%, var(--accent), transparent 60%); mix-blend-mode:screen; pointer-events:none; z-index:999; opacity:.95; transform:translate(-50%,-50%); filter:blur(1.5px)}
 #trail{position:fixed; inset:0; z-index:-996; pointer-events:none; background:radial-gradient(400px 300px at var(--tx,-100px) var(--ty,-100px), rgba(255,61,179,.10), transparent 60%), radial-gradient(350px 250px at calc(var(--tx,-100px) - 80px) calc(var(--ty,-100px) + 60px), rgba(0,231,255,.10), transparent 60%); transition:background-position .12s ease}
 #beam{position:fixed; height:2px; width:120px; background:linear-gradient(90deg, rgba(0,231,255,.28), rgba(255,61,179,.28)); border-radius:4px; filter:blur(1px); pointer-events:none; z-index:998; transform-origin:left center; mix-blend-mode:screen; opacity:.6}
 
-/* NAV — fixed top, glass, animated */
+/* NAV */
 .navbar{
-  position:fixed; top:0; left:0; right:0; z-index:2000;
-  height:var(--nav-h);
-  display:flex; align-items:center; justify-content:center;
+  position:fixed; top:0; left:0; right:0; z-index:1400;
+  height:var(--nav-h); display:flex; align-items:center; justify-content:center;
   backdrop-filter:saturate(130%) blur(12px); -webkit-backdrop-filter:saturate(130%) blur(12px);
 }
-.navbar::before{
-  content:""; position:absolute; top:0; left:0; right:0; height:2px;
-  background:linear-gradient(90deg,var(--primary),var(--accent));
-  opacity:.85;
-}
-.navbar .inner{
-  width:min(1200px, 96vw);
-  display:flex; align-items:center; justify-content:space-between;
-  background:var(--panel); border:1px solid var(--border);
-  border-radius:14px; padding:10px 16px; box-shadow:var(--shadow);
-}
+.navbar::before{content:""; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--primary),var(--accent)); opacity:.85;}
+.navbar .inner{width:min(1200px, 96vw); display:flex; align-items:center; justify-content:space-between; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:10px 16px; box-shadow:var(--shadow);}
 .logo{font-weight:900; letter-spacing:.2px; text-decoration:none; color:var(--text)}
 .logo span{color:var(--primary)}
 .navlinks{display:flex; align-items:center; gap:8px; position:relative}
 .navlinks a{color:var(--muted); text-decoration:none; padding:.55rem .7rem; border-radius:10px; transition:.2s; position:relative}
 .navlinks a:hover{color:var(--text); background:var(--panel); border:1px solid var(--border)}
 .btn-icon{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); background:var(--panel); color:var(--text); border-radius:12px; padding:.45rem .6rem; cursor:pointer}
-
-/* Active link pill + neon underline sweep + indicator */
-.navlinks a.is-active{
-  color:var(--text); background:rgba(255,255,255,.06); border:1px solid var(--primary);
-  box-shadow:0 6px 18px -10px rgba(0,231,255,.6);
-  animation:navBreath 3s ease-in-out infinite;
-}
-.navlinks a::after{
-  content:""; position:absolute; left:12px; right:12px; bottom:6px; height:2px;
-  background:linear-gradient(90deg,var(--primary),var(--accent));
-  transform:scaleX(0); transform-origin:left; transition:transform .25s ease;
-}
-.navlinks a:hover::after{ transform:scaleX(1); }
-@keyframes navBreath{ 0%,100%{ box-shadow:0 0 0 rgba(0,231,255,0);} 50%{ box-shadow:0 0 24px rgba(0,231,255,.45);} }
-
-/* moving indicator */
-.nav-indicator{
-  position:absolute; bottom:2px; height:3px; width:0; border-radius:3px;
-  background:linear-gradient(90deg, var(--primary), var(--accent));
-  transition:transform .28s cubic-bezier(.22,.61,.36,1), width .28s cubic-bezier(.22,.61,.36,1);
-}
-
-/* Hide/reveal on scroll */
-.navbar.hide{ transform:translateY(-100%); transition:transform .35s ease; }
-.navbar.show{ transform:translateY(0); transition:transform .35s ease; }
-.navbar.scrolled .inner{ box-shadow:0 10px 26px -14px rgba(0,0,0,.45); }
-
-/* Hero parallax lights */
-#heroLights{position:fixed; inset:0; pointer-events:none; z-index:-995}
-#heroLights .hl{position:absolute; width:40vw; height:40vw; border-radius:50%;
-  background:radial-gradient(circle at 50% 50%, rgba(0,231,255,.16), transparent 60%);}
-#heroLights .hl.b{background:radial-gradient(circle at 50% 50%, rgba(255,61,179,.16), transparent 60%);}
+.navlinks a.is-active{color:var(--text); background:rgba(255,255,255,.06); border:1px solid var(--primary); box-shadow:0 6px 18px -10px rgba(0,231,255,.6); animation:navBreath 3s ease-in-out infinite;}
+@keyframes navBreath{0%,100%{box-shadow:0 0 0 rgba(0,231,255,0)}50%{box-shadow:0 0 24px rgba(0,231,255,.45)}}
+.navlinks a::after{content:""; position:absolute; left:12px; right:12px; bottom:6px; height:2px; background:linear-gradient(90deg,var(--primary),var(--accent)); transform:scaleX(0); transform-origin:left; transition:transform .25s ease}
+.navlinks a:hover::after{transform:scaleX(1)}
+.nav-indicator{position:absolute; bottom:2px; height:3px; width:0; border-radius:3px; background:linear-gradient(90deg, var(--primary), var(--accent)); transition:transform .28s cubic-bezier(.22,.61,.36,1), width .28s cubic-bezier(.22,.61,.36,1)}
+.navbar.hide{transform:translateY(-100%); transition:transform .35s ease}
+.navbar.show{transform:translateY(0); transition:transform .35s ease}
+.navbar.scrolled .inner{box-shadow:0 10px 26px -14px rgba(0,0,0,.45)}
 
 /* Hero */
 .viewport{min-height:92vh; display:grid; place-items:center; padding:90px 16px}
@@ -103,12 +69,13 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .hero-photo{position:relative; width:260px; height:260px; display:grid; place-items:center}
 .morph{position:absolute; inset:0; transform:scale(1.05); z-index:1}
 .hero-photo img{position:relative; z-index:2; width:200px; height:200px; object-fit:cover; border-radius:50%; border:3px solid var(--primary); box-shadow:0 0 25px rgba(0,231,255,.55); animation:float 6s ease-in-out infinite}
+#pixSort{position:absolute; z-index:3; inset:0; width:260px; height:260px; display:none; pointer-events:none}
 .ring{position:absolute; border-radius:50%; pointer-events:none; border:2px solid transparent; z-index:0}
 .ring1,.ring2{inset:-6px; border-image:conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary)) 1; animation:spin 12s linear infinite; opacity:.7}
 .ring2{inset:-16px; animation-direction:reverse; animation-duration:24s; opacity:.45}
 
 /* Missing portrait overlay */
-#missingOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:3; background:radial-gradient(600px 420px at 50% 20%, rgba(0,231,255,.2), transparent 70%)}
+#missingOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:4; background:radial-gradient(600px 420px at 50% 20%, rgba(0,231,255,.2), transparent 70%)}
 .hero-photo.missing #missingOverlay{display:flex}
 .initials{width:160px; height:160px; border-radius:50%; display:grid; place-items:center; font-weight:1000; font-size:2.6rem; color:#061217; background:conic-gradient(from 0deg, var(--primary), var(--accent)); box-shadow:0 0 30px rgba(0,231,255,.4)}
 .missing-label{position:absolute; bottom:18px; left:50%; transform:translateX(-50%); color:var(--text); font-size:.9rem; background:rgba(0,0,0,.28); padding:.35rem .6rem; border-radius:10px}
@@ -118,21 +85,20 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .orbit li{position:absolute; left:50%; top:50%; transform-origin:-100px 0; animation:orbit 10s linear infinite; filter:drop-shadow(0 0 6px rgba(255,255,255,.5))}
 @keyframes orbit{to{transform:rotate(360deg)}}
 
-/* Particle name canvas */
+/* Name canvas */
 .name-fx{ position:relative; width:min(760px, 86vw); height:120px; }
 #nameFx{ position:absolute; inset:0; width:100%; height:100%; z-index:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,.35)) }
 
-/* Title */
+/* Title + typed */
 .title{position:relative; z-index:1; font-size:clamp(2rem,3.8vw,3.4rem); line-height:1.2; margin:10px 0 10px}
 .title b{color:var(--primary)}
 .spark{position:absolute; left:50%; transform:translateX(-50%); width:70%; color:var(--accent); opacity:.0}
-
 .typed-line{font-size:1.4rem; color:var(--accent); margin:.6rem 0 0; font-weight:800; min-height:2rem}
 .cursor-blink{display:inline-block; animation:blink 1s step-start infinite}
 @keyframes blink{50%{opacity:0}}
 .lead{color:var(--muted); max-width:860px; margin:10px auto 18px}
 
-/* CTA (high contrast) */
+/* CTA */
 .cta-row{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; margin:18px 0 28px}
 .btn{display:inline-flex; align-items:center; justify-content:center; min-height:48px; line-height:1; border-radius:14px; padding:0 1.15rem; text-decoration:none; font-weight:900; letter-spacing:.2px; position:relative; overflow:hidden; transform:translateZ(0)}
 .btn-ghost{border:1px solid var(--border); color:var(--text); background:rgba(0,0,0,.15)}
@@ -140,9 +106,9 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .btn-primary:hover{transform:translateY(-2px); box-shadow:0 22px 60px -14px rgba(0,231,255,.75), 0 0 22px rgba(255,61,179,.35)}
 .magnet::after{content:""; position:absolute; inset:auto -20% -120% -20%; height:200%; background:radial-gradient(140px 70px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.5), transparent 60%); transition:opacity .15s; opacity:0; pointer-events:none}
 .magnet:hover::after{opacity:.5}
-.btn:active{transform:scale(.97)} /* spring press */
+.btn:active{transform:scale(.97)}
 
-/* Stats + misc */
+/* Stats */
 .hero-stats{display:flex; justify-content:center; gap:12px; flex-wrap:wrap}
 .stat{display:grid; place-items:center; width:160px; height:110px; box-shadow:var(--shadow)}
 .stat span{font-size:1.8rem; font-weight:900}
@@ -158,32 +124,14 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .section p{color:var(--muted)}
 .headline{position:relative; display:inline-block}
 .headline::after{content:""; position:absolute; left:0; right:0; bottom:-6px; height:3px; border-radius:3px; background:linear-gradient(90deg, var(--primary), var(--accent)); transform:scaleX(0); transform-origin:left}
+.section::after{content:""; position:absolute; inset:-2px; pointer-events:none; border-radius:18px; background:conic-gradient(from 0deg, transparent 0 20%, rgba(0,231,255,.10), rgba(255,61,179,.10), transparent 80% 100%); filter:blur(10px); opacity:0; transform:scale(.98); transition:opacity .6s ease, transform .6s ease;}
+.section.entered::after{opacity:1; transform:scale(1)}
 
-/* Section edge glow sweep */
-.section::after{
-  content:""; position:absolute; inset:-2px; pointer-events:none; border-radius:18px;
-  background:conic-gradient(from 0deg, transparent 0 20%, rgba(0,231,255,.10), rgba(255,61,179,.10), transparent 80% 100%);
-  filter:blur(10px); opacity:0; transform:scale(.98);
-  transition:opacity .6s ease, transform .6s ease;
-}
-.section.entered::after{ opacity:1; transform:scale(1); }
-
-/* Timeline */
-.timeline{display:grid; gap:14px; margin-top:10px}
-.t-item{padding:16px}
-.t-meta{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px}
-.t-meta span{color:var(--muted); font-size:.95rem}
-
-/* Chips */
-.chip-grid{list-style:none; display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:16px 0 0}
-.chip{padding:.65rem .9rem; border-radius:999px; background:var(--panel); border:1px solid var(--border); color:var(--text); font-weight:800}
-
-/* Projects */
+/* Projects & cards (inc. glitch) */
 .section-head{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px}
 .filters{display:flex; gap:8px}
 .filter{border:1px solid var(--border); background:var(--panel); color:var(--muted); padding:.6rem .9rem; border-radius:10px; cursor:pointer; font-weight:900}
 .filter.active, .filter:hover{color:var(--text); border-color:var(--primary)}
-
 .grid{display:grid; gap:18px; grid-template-columns:repeat(auto-fit, minmax(270px, 1fr)); align-items:stretch; margin-top:16px}
 .card{position:relative; overflow:hidden; border-radius:16px; border:1px solid var(--border); background:var(--panel); transition:transform .3s, box-shadow .3s; box-shadow:var(--shadow); display:flex; flex-direction:column; will-change:transform}
 .img-wrap{position:relative; overflow:hidden}
@@ -198,17 +146,11 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .shine::before{content:""; position:absolute; inset:-200% -50% auto -50%; height:200%; transform:rotate(20deg); background:linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent); opacity:0; transition:opacity .3s}
 .shine:hover::before{opacity:.8; animation:shineSwipe 1s ease}
 @keyframes shineSwipe{to{transform:translateX(200%) rotate(20deg)}}
-
-/* Glitch effect on image hover */
-.glitch .img-wrap::after,
-.glitch .img-wrap::before{
-  content:""; position:absolute; inset:0; mix-blend-mode:screen; opacity:0; pointer-events:none;
-  background:repeating-linear-gradient(0deg, rgba(255,61,179,.25), rgba(255,61,179,.25) 2px, transparent 2px, transparent 4px);
-}
-.glitch:hover .img-wrap::after{ animation:gl1 .45s steps(8) both; opacity:1 }
-.glitch:hover .img-wrap::before{ animation:gl2 .55s steps(9) both; opacity:.8 }
-@keyframes gl1{ 0%{clip-path:inset(10% 0 70% 0); transform:translate(-6px,-4px)} 50%{clip-path:inset(60% 0 15% 0); transform:translate(6px,2px)} 100%{clip-path:inset(20% 0 40% 0); transform:translate(-4px,3px)} }
-@keyframes gl2{ 0%{clip-path:inset(70% 0 5% 0); transform:translate(6px,4px)} 50%{clip-path:inset(30% 0 40% 0); transform:translate(-5px,-3px)} 100%{clip-path:inset(45% 0 35% 0); transform:translate(3px,-2px)} }
+.glitch .img-wrap::after,.glitch .img-wrap::before{content:""; position:absolute; inset:0; mix-blend-mode:screen; opacity:0; pointer-events:none; background:repeating-linear-gradient(0deg, rgba(255,61,179,.25), rgba(255,61,179,.25) 2px, transparent 2px, transparent 4px)}
+.glitch:hover .img-wrap::after{animation:gl1 .45s steps(8) both; opacity:1}
+.glitch:hover .img-wrap::before{animation:gl2 .55s steps(9) both; opacity:.8}
+@keyframes gl1{0%{clip-path:inset(10% 0 70% 0); transform:translate(-6px,-4px)}50%{clip-path:inset(60% 0 15% 0); transform:translate(6px,2px)}100%{clip-path:inset(20% 0 40% 0); transform:translate(-4px,3px)}}
+@keyframes gl2{0%{clip-path:inset(70% 0 5% 0); transform:translate(6px,4px)}50%{clip-path:inset(30% 0 40% 0); transform:translate(-5px,-3px)}100%{clip-path:inset(45% 0 35% 0); transform:translate(3px,-2px)}}
 
 /* Footer & modal */
 .footer{margin:70px 12px 22px; padding:16px 18px; text-align:center; color:var(--muted)}
@@ -220,19 +162,10 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 
 /* Gooey FAB */
 .fab{position:fixed; right:22px; bottom:22px; z-index:1600; filter:url(#goo)}
-.fab-btn{
-  width:58px; height:58px; border-radius:50%; border:none; cursor:pointer;
-  color:#061217; font-weight:900; font-size:1.15rem;
-  background:linear-gradient(135deg, var(--primary), var(--accent)); box-shadow:0 18px 40px -14px rgba(0,231,255,.65);
-}
-.fab-cluster{ position:absolute; inset:0; pointer-events:none }
-.fab-item{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:44px; height:44px; border-radius:50%; display:grid; place-items:center;
-  background:var(--panel); color:var(--text); border:1px solid var(--border); text-decoration:none; font-weight:900;
-  pointer-events:none; opacity:0;
-}
-.fab.open .fab-item{ pointer-events:auto; opacity:1; transition:opacity .2s ease }
+.fab-btn{width:58px; height:58px; border-radius:50%; border:none; cursor:pointer; color:#061217; font-weight:900; font-size:1.15rem; background:linear-gradient(135deg, var(--primary), var(--accent)); box-shadow:0 18px 40px -14px rgba(0,231,255,.65)}
+.fab-cluster{position:absolute; inset:0; pointer-events:none}
+.fab-item{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:44px; height:44px; border-radius:50%; display:grid; place-items:center; background:var(--panel); color:var(--text); border:1px solid var(--border); text-decoration:none; font-weight:900; pointer-events:none; opacity:0}
+.fab.open .fab-item{pointer-events:auto; opacity:1; transition:opacity .2s ease}
 
 /* perf hints */
 .card, .hero-photo, .hero-photo img, .ring, .morph path { will-change: transform }
