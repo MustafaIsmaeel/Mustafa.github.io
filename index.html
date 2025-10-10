@@ -8,18 +8,12 @@
   <link rel="icon" href="assets/mustafa.jpg" type="image/jpeg" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="style.css" />
-
-  <!-- Pre-init theme to avoid flash -->
   <script>
-    (function(){
-      try{
-        var s=localStorage.getItem('theme');
-        if(!s){var l=matchMedia('(prefers-color-scheme: light)').matches;document.documentElement.setAttribute('data-theme',l?'light':'dark');}
-        else{document.documentElement.setAttribute('data-theme',s);}
-      }catch(e){}
-    })();
+    (function(){try{
+      var s=localStorage.getItem('theme');
+      document.documentElement.setAttribute('data-theme', s ? s : (matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'));
+    }catch(e){}})();
   </script>
-
   <!-- Motion & 3D libs -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -30,46 +24,32 @@
 </head>
 <body>
   <!-- BACKDROPS -->
-  <canvas id="bg" aria-hidden="true"></canvas>       <!-- shader nebula -->
-  <canvas id="net" aria-hidden="true"></canvas>      <!-- constellation network -->
-  <canvas id="ribbon" aria-hidden="true"></canvas>   <!-- skills ribbon -->
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <canvas id="net" aria-hidden="true"></canvas>
+  <canvas id="ribbon" aria-hidden="true"></canvas>
 
-  <!-- SVG global filters (liquid hover, goo, etc.) -->
+  <!-- Global SVG filters (liquid hover) -->
   <svg width="0" height="0" style="position:absolute">
     <defs>
-      <!-- Liquid displacement for project images -->
       <filter id="liquid" x="-20%" y="-20%" width="140%" height="140%">
         <feTurbulence type="fractalNoise" baseFrequency="0.011 0.02" numOctaves="2" seed="12" result="noise">
           <animate attributeName="baseFrequency" dur="3s" values="0.008 0.02;0.02 0.03;0.008 0.02" repeatCount="indefinite"/>
         </feTurbulence>
         <feDisplacementMap in="SourceGraphic" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G"/>
       </filter>
-
-      <!-- Goo for buttons (kept light) -->
-      <filter id="goo" color-interpolation-filters="sRGB">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
-        <feColorMatrix in="blur" mode="matrix" values="
-          1 0 0 0 0
-          0 1 0 0 0
-          0 0 1 0 0
-          0 0 0 20 -10" result="goo"/>
-        <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
-      </filter>
     </defs>
   </svg>
 
-  <!-- Cinematic entry splash -->
+  <!-- Splash -->
   <div id="intro" aria-hidden="true">
     <div class="intro-core">
       <div class="intro-logo">Mustafa<span>.dev</span></div>
-      <div class="intro-ring r1"></div>
-      <div class="intro-ring r2"></div>
-      <div class="intro-ring r3"></div>
+      <div class="intro-ring r1"></div><div class="intro-ring r2"></div><div class="intro-ring r3"></div>
       <div class="intro-tip">loading experience…</div>
     </div>
   </div>
 
-  <!-- Cursor comet & glow -->
+  <!-- Cursor FX -->
   <div id="cursor" aria-hidden="true"></div>
   <div id="trail" aria-hidden="true"></div>
   <div id="beam" aria-hidden="true"></div>
@@ -77,8 +57,11 @@
   <!-- Scroll progress -->
   <div id="scrollbar" aria-hidden="true"></div>
 
-  <!-- Liquid page portal -->
+  <!-- Page portal -->
   <div id="transition" aria-hidden="true"></div>
+
+  <!-- Confetti canvas -->
+  <canvas id="confetti" aria-hidden="true"></canvas>
 
   <!-- NAV -->
   <header class="navbar glass">
@@ -102,22 +85,26 @@
   <section id="hero" class="viewport">
     <div class="hero-inner">
       <div class="hero-top">
-        <div class="hero-photo tilt neon-border">
-          <!-- Morphing blob behind portrait -->
+        <div class="hero-photo tilt neon-border" id="photoWrap">
+          <!-- Morphing blob -->
           <svg class="morph" viewBox="0 0 600 600" width="260" height="260" aria-hidden="true">
             <defs><radialGradient id="g" cx="50%" cy="50%"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".9"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
             <path id="morphPath" fill="url(#g)"></path>
           </svg>
 
-          <!-- PROFILE PICTURE (with fallback) -->
+          <!-- Portrait with resilient fallback -->
           <picture>
             <source srcset="assets/mustafa.webp" type="image/webp">
-            <img id="portrait" src="assets/mustafa.jpg" alt="Mustafa Alsaegh portrait"
-                 onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,\
-                 <svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22 viewBox=%220 0 200 200%22>\
-                 <defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop stop-color=%22%2300e7ff%22/><stop offset=%221%22 stop-color=%22%23ff3db3%22/></linearGradient></defs>\
-                 <rect width=%22200%22 height=%22200%22 fill=%22url(%23g)%22/><text x=%2250%22 y=%2254%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2220%22 font-family=%22Arial%22>Upload</text><text x=%2250%22 y=%2270%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2216%22>mustafa.jpg</text></svg>';">
+            <img id="portrait" src="assets/mustafa.jpg" alt="Mustafa Alsaegh portrait">
           </picture>
+
+          <!-- Missing overlay (auto-shown if image fails) -->
+          <div id="missingOverlay" aria-hidden="true">
+            <div class="missing-inner">
+              <div class="initials">MA</div>
+              <div class="missing-label">Upload <b>assets/mustafa.jpg</b></div>
+            </div>
+          </div>
 
           <span class="ring ring1"></span><span class="ring ring2"></span>
           <ul class="orbit"><li>🐍</li><li>📊</li><li>⚙️</li><li>🔗</li><li>📈</li><li>🧱</li></ul>
@@ -131,7 +118,7 @@
         </h1>
       </div>
 
-      <!-- TYPEWRITER SUBTITLE -->
+      <!-- Typed subtitle -->
       <p class="typed-line">
         <span id="typed"></span><span class="cursor-blink">|</span>
       </p>
@@ -140,7 +127,8 @@
         I build intelligent data systems — Python ETL, ServiceNow/Canvas integrations, and interactive Power BI experiences that turn raw data into decisions.
       </p>
 
-      <div class="cta-row" style="filter:url(#goo)">
+      <!-- CTA (goo removed for visibility across browsers) -->
+      <div class="cta-row">
         <a href="#projects" data-jump class="btn btn-primary magnet ripple">Explore Work</a>
         <a href="#contact" data-jump class="btn btn-ghost ripple">Contact</a>
         <button class="btn btn-ghost ripple" id="openResume">View Résumé</button>
@@ -275,7 +263,7 @@
     </div>
   </section>
 
-  <footer class="footer glass">© <span id="y"></span> Mustafa Alsaegh — Built with ❤️ w Coffee</footer>
+  <footer class="footer glass">© <span id="y"></span> Mustafa Alsaegh — Built with ❤️, GSAP, Three.js & VanillaTilt</footer>
 
   <!-- Résumé Modal -->
   <dialog id="resumeModal" class="resume-modal glass">
