@@ -54,6 +54,51 @@ addEventListener('mousemove', function(e){
   beam.style.transform = `translate(${mx-60}px,${my}px) rotate(${angle}rad)`;
 });
 
+/* ---- Smart navbar: hide on scroll down, show on scroll up; set active link ---- */
+(function(){
+  var nav = document.querySelector('.navbar'); if(!nav) return;
+  var links = Array.from(document.querySelectorAll('.navlinks a[href^="#"]'));
+  var lastY = window.scrollY, ticking=false;
+
+  function onScroll(){
+    var y = window.scrollY;
+    if (y > 140 && y > lastY) { nav.classList.add('hide'); nav.classList.remove('show'); }
+    else { nav.classList.remove('hide'); nav.classList.add('show'); }
+    nav.classList.toggle('scrolled', y > 10);
+    lastY = y;
+
+    var best = null, bestDist = Infinity;
+    for (var a of links){
+      var id = a.getAttribute('href'); if (!id || id === '#') continue;
+      var sec = document.querySelector(id); if(!sec) continue;
+      var r = sec.getBoundingClientRect();
+      var dist = Math.abs(r.top - window.innerHeight*0.25);
+      if (dist < bestDist){ bestDist = dist; best = a; }
+    }
+    links.forEach(l => l.classList.toggle('is-active', l === best));
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ requestAnimationFrame(function(){ onScroll(); ticking=false; }); ticking=true; }});
+  onScroll();
+})();
+
+/* Magnetic wobble for nav items */
+document.querySelectorAll('.navlinks a').forEach(function(el){
+  el.addEventListener('mousemove', function(e){
+    var r = el.getBoundingClientRect(), dx = (e.clientX - (r.left + r.width/2))/r.width, dy = (e.clientY - (r.top + r.height/2))/r.height;
+    el.style.transform = `translate(${dx*6}px, ${dy*4}px)`;
+  });
+  el.addEventListener('mouseleave', function(){ el.style.transform = 'translate(0,0)'; });
+});
+
+/* Magnetic hover aura for buttons & anchors with data-jump */
+document.querySelectorAll('.magnet,[data-jump]').forEach(function(btn){
+  btn.addEventListener('mousemove', function(e){
+    var r = btn.getBoundingClientRect();
+    btn.style.setProperty('--mx', ((e.clientX - r.left)/r.width)*100 + '%');
+    btn.style.setProperty('--my', ((e.clientY - r.top)/r.height)*100 + '%');
+  });
+});
+
 /* Smooth portal transition on anchor clicks */
 var portal = document.getElementById('transition');
 function portalJump(target, x, y){
@@ -126,7 +171,7 @@ filters.forEach(function(f){
   });
 });
 
-/* GSAP section reveals + headline scramble */
+/* GSAP section reveals + headline scramble (+ edge glow) */
 try{
   if(window.gsap && window.ScrollTrigger){
     gsap.registerPlugin(ScrollTrigger);
@@ -137,7 +182,8 @@ try{
     });
     document.querySelectorAll('.section').forEach(function(sec){
       gsap.fromTo(sec,{clipPath:'inset(15% 15% 15% 15% round 16px)',opacity:0,y:20},
-        {clipPath:'inset(0% 0% 0% 0% round 16px)',opacity:1,y:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:sec,start:'top 80%'}});
+        {clipPath:'inset(0% 0% 0% 0% round 16px)',opacity:1,y:0,duration:.9,ease:'power3.out',
+         scrollTrigger:{trigger:sec,start:'top 80%', onEnter:function(){ sec.classList.add('entered'); } }});
       var hl=sec.querySelector('.headline'); if(hl){
         ScrollTrigger.create({trigger:hl,start:'top 85%',once:true,onEnter:function(){
           hl.style.setProperty('--sx',0); var st=document.createElement('style'); st.innerHTML='.headline::after{ transform:scaleX(var(--sx,0)); }'; document.head.appendChild(st);
@@ -334,7 +380,6 @@ function confettiBurst(){
     }
     return pts;
   }
-
   var targets = sample('Mustafa', 86);
   var particles = Array.from({length: Math.min(1800, targets.length)}, function(_,i){
     var t = targets[i]; return { x: Math.random()*c.width, y: Math.random()*c.height, vx:0, vy:0, tx: t.x, ty: t.y };
@@ -364,7 +409,7 @@ function confettiBurst(){
   loop();
 })();
 
-/* Resize housekeeping for canvases */
+/* Resize housekeeping for confetti canvas */
 window.addEventListener('resize', function(){
   var c = document.getElementById('confetti'); if(!c) return; var dpr=Math.min(2,devicePixelRatio||1);
   c.width=innerWidth*dpr; c.height=innerHeight*dpr; c.style.width=innerWidth+'px'; c.style.height=innerHeight+'px';
