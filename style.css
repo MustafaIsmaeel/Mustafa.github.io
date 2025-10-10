@@ -13,6 +13,7 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 #bg,#net,#ribbon{position:fixed; inset:0; z-index:-999}
 #net{z-index:-998; pointer-events:none}
 #ribbon{z-index:-997; pointer-events:none}
+#rippleFx{position:fixed; inset:0; pointer-events:none; z-index:100; mix-blend-mode:screen}
 
 /* Intro splash */
 #intro{position:fixed; inset:0; background:radial-gradient(900px 600px at 70% -20%, rgba(0,231,255,.08), transparent), radial-gradient(700px 500px at 10% -10%, rgba(255,61,179,.08), transparent), var(--bg); display:grid; place-items:center; z-index:1200}
@@ -57,7 +58,7 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .ring1,.ring2{inset:-6px; border-image:conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary)) 1; animation:spin 12s linear infinite; opacity:.7}
 .ring2{inset:-16px; animation-direction:reverse; animation-duration:24s; opacity:.45}
 
-/* Missing overlay styling */
+/* Missing portrait overlay */
 #missingOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:3; background:radial-gradient(600px 420px at 50% 20%, rgba(0,231,255,.2), transparent 70%)}
 .hero-photo.missing #missingOverlay{display:flex}
 .initials{width:160px; height:160px; border-radius:50%; display:grid; place-items:center; font-weight:1000; font-size:2.6rem; color:#061217; background:conic-gradient(from 0deg, var(--primary), var(--accent)); box-shadow:0 0 30px rgba(0,231,255,.4)}
@@ -68,7 +69,12 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .orbit li{position:absolute; left:50%; top:50%; transform-origin:-100px 0; animation:orbit 10s linear infinite; filter:drop-shadow(0 0 6px rgba(255,255,255,.5))}
 @keyframes orbit{to{transform:rotate(360deg)}}
 
-.title{font-size:clamp(2rem,3.8vw,3.4rem); line-height:1.2; margin:10px 0 10px; position:relative}
+/* Particle name canvas */
+.name-fx{ position:relative; width:min(760px, 86vw); height:120px; }
+#nameFx{ position:absolute; inset:0; width:100%; height:100%; z-index:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,.35)) }
+
+/* Title */
+.title{position:relative; z-index:1; font-size:clamp(2rem,3.8vw,3.4rem); line-height:1.2; margin:10px 0 10px}
 .title b{color:var(--primary)}
 .spark{position:absolute; left:50%; transform:translateX(-50%); width:70%; color:var(--accent); opacity:.0}
 
@@ -77,12 +83,12 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 @keyframes blink{50%{opacity:0}}
 .lead{color:var(--muted); max-width:860px; margin:10px auto 18px}
 
-/* CTA (contrast boosted; no goo filter) */
+/* CTA (high contrast) */
 .cta-row{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; margin:18px 0 28px}
 .btn{display:inline-flex; align-items:center; justify-content:center; min-height:48px; line-height:1; border-radius:14px; padding:0 1.15rem; text-decoration:none; font-weight:900; letter-spacing:.2px; position:relative; overflow:hidden}
 .btn-ghost{border:1px solid var(--border); color:var(--text); background:rgba(0,0,0,.15)}
 .btn-primary{color:#061217; background:linear-gradient(90deg, var(--primary), var(--accent)); box-shadow:0 10px 28px -10px rgba(0,231,255,.6); transition:transform .2s, box-shadow .2s}
-.btn-primary:hover{transform:translateY(-2px); box-shadow:0 18px 40px -12px rgba(0,231,255,.65)}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 22px 60px -14px rgba(0,231,255,.75), 0 0 22px rgba(255,61,179,.35)}
 .magnet::after{content:""; position:absolute; inset:auto -20% -120% -20%; height:200%; background:radial-gradient(140px 70px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.5), transparent 60%); transition:opacity .15s; opacity:0; pointer-events:none}
 .magnet:hover::after{opacity:.5}
 .ripple:active::before{content:""; position:absolute; left:50%; top:50%; width:10px; height:10px; border-radius:50%; transform:translate(-50%,-50%); background:rgba(255,255,255,.5); animation:ripple 600ms ease}
