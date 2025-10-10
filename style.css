@@ -41,10 +41,8 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .navbar{position:sticky; top:0; z-index:50; margin:12px; padding:10px 16px; display:flex; align-items:center; justify-content:space-between}
 .logo{font-weight:900; letter-spacing:.2px; text-decoration:none; color:var(--text)} .logo span{color:var(--primary)}
 .navlinks{display:flex; align-items:center; gap:16px; position:relative}
-.navlinks a{color:var(--muted); text-decoration:none; padding:.45rem .6rem; border-radius:10px; transition:.2s; position:relative}
+.navlinks a{color:var(--muted); text-decoration:none; padding:.45rem .6rem; border-radius:10px; transition:.2s}
 .navlinks a:hover{color:var(--text); background:var(--panel); border:1px solid var(--border)}
-/* magnetic underline */
-.navlinks::after{content:""; position:absolute; height:2px; background:linear-gradient(90deg,var(--primary),var(--accent)); width:0; left:0; bottom:2px; border-radius:2px; transition:transform .2s,width .2s, left .2s}
 .btn-icon{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); background:var(--panel); color:var(--text); border-radius:12px; padding:.45rem .6rem; cursor:pointer}
 .btn-icon .sun{display:none} html[data-theme="light"] .btn-icon .sun{display:inline} html[data-theme="light"] .btn-icon .moon{display:none}
 
@@ -59,7 +57,13 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .ring1,.ring2{inset:-6px; border-image:conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary)) 1; animation:spin 12s linear infinite; opacity:.7}
 .ring2{inset:-16px; animation-direction:reverse; animation-duration:24s; opacity:.45}
 
-/* Orbiting emoji tech sparks */
+/* Missing overlay styling */
+#missingOverlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:3; background:radial-gradient(600px 420px at 50% 20%, rgba(0,231,255,.2), transparent 70%)}
+.hero-photo.missing #missingOverlay{display:flex}
+.initials{width:160px; height:160px; border-radius:50%; display:grid; place-items:center; font-weight:1000; font-size:2.6rem; color:#061217; background:conic-gradient(from 0deg, var(--primary), var(--accent)); box-shadow:0 0 30px rgba(0,231,255,.4)}
+.missing-label{position:absolute; bottom:18px; left:50%; transform:translateX(-50%); color:var(--text); font-size:.9rem; background:rgba(0,0,0,.28); padding:.35rem .6rem; border-radius:10px}
+
+/* Orbit */
 .orbit{position:absolute; inset:0; list-style:none; margin:0; padding:0; pointer-events:none}
 .orbit li{position:absolute; left:50%; top:50%; transform-origin:-100px 0; animation:orbit 10s linear infinite; filter:drop-shadow(0 0 6px rgba(255,255,255,.5))}
 @keyframes orbit{to{transform:rotate(360deg)}}
@@ -73,11 +77,12 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 @keyframes blink{50%{opacity:0}}
 .lead{color:var(--muted); max-width:860px; margin:10px auto 18px}
 
+/* CTA (contrast boosted; no goo filter) */
 .cta-row{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; margin:18px 0 28px}
 .btn{display:inline-flex; align-items:center; justify-content:center; min-height:48px; line-height:1; border-radius:14px; padding:0 1.15rem; text-decoration:none; font-weight:900; letter-spacing:.2px; position:relative; overflow:hidden}
-.btn-ghost{border:1px solid var(--border); color:var(--text); background:transparent}
-.btn-primary{color:#061217; background:linear-gradient(90deg, var(--primary), var(--accent)); box-shadow:0 10px 28px -10px rgba(0,231,255,.5); transition:transform .2s, box-shadow .2s}
-.btn-primary:hover{transform:translateY(-2px); box-shadow:0 14px 34px -12px rgba(0,231,255,.6)}
+.btn-ghost{border:1px solid var(--border); color:var(--text); background:rgba(0,0,0,.15)}
+.btn-primary{color:#061217; background:linear-gradient(90deg, var(--primary), var(--accent)); box-shadow:0 10px 28px -10px rgba(0,231,255,.6); transition:transform .2s, box-shadow .2s}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 18px 40px -12px rgba(0,231,255,.65)}
 .magnet::after{content:""; position:absolute; inset:auto -20% -120% -20%; height:200%; background:radial-gradient(140px 70px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.5), transparent 60%); transition:opacity .15s; opacity:0; pointer-events:none}
 .magnet:hover::after{opacity:.5}
 .ripple:active::before{content:""; position:absolute; left:50%; top:50%; width:10px; height:10px; border-radius:50%; transform:translate(-50%,-50%); background:rgba(255,255,255,.5); animation:ripple 600ms ease}
@@ -99,13 +104,6 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .headline{position:relative; display:inline-block}
 .headline::after{content:""; position:absolute; left:0; right:0; bottom:-6px; height:3px; border-radius:3px; background:linear-gradient(90deg, var(--primary), var(--accent)); transform:scaleX(0); transform-origin:left}
 
-/* Section ripple enter overlay */
-.section::before{
-  content:""; position:absolute; inset:auto auto 0 0; width:0; height:0; border-radius:50%;
-  background:radial-gradient(closest-side, rgba(0,231,255,.18), rgba(255,61,179,.18), transparent 70%);
-  transform:translate(-50%,-50%); opacity:0; pointer-events:none;
-}
-
 /* Timeline */
 .timeline{display:grid; gap:14px; margin-top:10px}
 .t-item{padding:16px}
@@ -126,7 +124,6 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 .card{position:relative; overflow:hidden; border-radius:16px; border:1px solid var(--border); background:var(--panel); transition:transform .3s, box-shadow .3s; box-shadow:var(--shadow); display:flex; flex-direction:column; will-change:transform}
 .img-wrap{position:relative; overflow:hidden}
 .img-wrap img{width:100%; height:190px; object-fit:cover; display:block; filter:saturate(1.08) contrast(1.05)}
-/* Liquid hover using SVG filter */
 .liquid:hover img{filter:url(#liquid)}
 .card-body{padding:14px; display:flex; flex-direction:column; gap:8px; flex:1}
 .card h3{margin:4px 0 0}
@@ -148,7 +145,6 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
 
 /* perf hints */
 .card, .hero-photo, .hero-photo img, .ring, .morph path { will-change: transform }
-
 @media (max-width:520px){ .cta-row .btn{ flex:1 1 100% } }
 @media (max-width:920px){ .navlinks a:nth-child(n+6){display:none} }
 @media (max-width:760px){ .navlinks a{display:none} .navbar{padding:8px 12px} .hero-stats{gap:8px} }
