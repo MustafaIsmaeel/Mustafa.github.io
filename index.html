@@ -28,8 +28,9 @@
   <canvas id="net" aria-hidden="true"></canvas>      <!-- constellation -->
   <canvas id="ribbon" aria-hidden="true"></canvas>   <!-- skills ribbon -->
   <canvas id="rippleFx" aria-hidden="true"></canvas> <!-- page click ripples -->
+  <canvas id="scrollFx" aria-hidden="true"></canvas> <!-- scroll waves -->
 
-  <!-- Global SVG filters (liquid hover + gooey option) -->
+  <!-- Global SVG filters (liquid / gooey) -->
   <svg width="0" height="0" style="position:absolute">
     <defs>
       <filter id="liquid" x="-20%" y="-20%" width="140%" height="140%">
@@ -216,6 +217,10 @@
       </div>
     </div>
 
+    <div class="marquee" aria-hidden="true">
+      <div class="m-track">POWER • DATA • ETL • DASHBOARDS • INSIGHT • AUTOMATION •</div>
+    </div>
+
     <div class="grid depth-parallax" id="projectGrid">
       <article class="card tilt shine neon-border" data-tags="dashboard">
         <div class="img-wrap liquid"><img src="assets/project1.jpg" alt="SOQ analytics dashboard preview" /></div>
@@ -290,6 +295,15 @@
     <iframe id="resumeFrame" src="assets/resume.pdf" title="Resume PDF" loading="lazy"></iframe>
     <div class="resume-actions"><a class="btn btn-primary" href="assets/resume.pdf" download>Download PDF</a></div>
   </dialog>
+
+  <!-- Gooey radial menu -->
+  <div id="gooMenu" aria-label="Quick menu">
+    <button class="goo-toggle" aria-label="Open quick menu">☰</button>
+    <a class="goo-item" href="#projects" data-jump title="Projects">🗂</a>
+    <a class="goo-item" href="#skills" data-jump title="Skills">✨</a>
+    <a class="goo-item" href="#contact" data-jump title="Contact">✉️</a>
+    <a class="goo-item" href="#about" data-jump title="About">👋</a>
+  </div>
 
   <script src="script.js" defer></script>
   <noscript><style>.section,.navbar,.footer{opacity:1!important;transform:none!important}</style></noscript>
