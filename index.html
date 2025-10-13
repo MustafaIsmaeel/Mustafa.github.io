@@ -192,11 +192,11 @@
   <section id="skills" class="section">
     <h2 class="headline scramble">Skills</h2>
     <ul class="chip-grid">
-      <li class="chip tilt">Python</li><li class="chip tilt">pandas</li><li class="chip tilt">SQL</li>
+      <li class="chip tilt">Python</li><li class="chip tilt">R</li><li class="chip tilt">SQL</li><li class="chip tilt">MATLAB</li><li class="chip tilt">Alteryx</li><li class="chip tilt">Stata</li>
       <li class="chip tilt">Power BI (DAX)</li><li class="chip tilt">ServiceNow</li><li class="chip tilt">Explorance Blue</li>
-      <li class="chip tilt">APIs & ETL</li><li class="chip tilt">Canvas LMS</li><li class="chip tilt">HTML/CSS/JS</li>
-      <li class="chip tilt">Automation</li><li class="chip tilt">Data Modeling</li><li class="chip tilt">Visualization</li>
-    </ul>
+      <li class="chip tilt">APIs & ETL</li><li class="chip tilt">Canvas LMS</li><li class="chip tilt">HTML/CSS/JS</li><li class="chip tilt">Tensorflow</li>
+      <li class="chip tilt">Automation</li><li class="chip tilt">Data Wrengling</li><li class="chip tilt">Visualization</li>
+    </ul>  
   </section>
 
   <!-- PROJECTS -->
@@ -231,20 +231,171 @@
     </div>
   </section>
 
-  <!-- CASES -->
-  <section id="cases" class="section">
-    <h2 class="headline scramble">Case Studies</h2>
-    <div class="cases">
-      <details class="case glass">
-        <summary><b>Boosting SOQ Response Rates</b> — division dashboards & nudges</summary>
-        <div class="case-body"><p><b>Context:</b> SOQ participation varied by modality and part-of-term.</p><p><b>Solution:</b> Response dashboards with slicers; automated reminder copy with deep links.</p><p><b>Impact:</b> +12–18% response rate in targeted cohorts.</p></div>
-      </details>
-      <details class="case glass">
-        <summary><b>Canvas → Analytics</b> — nightly sync + warehouse schema</summary>
-        <div class="case-body"><p><b>Context:</b> Systems tracked courses & instructors differently.</p><p><b>Solution:</b> Python/REST sync; canonical tables.</p><p><b>Impact:</b> A reliable single-source-of-truth.</p></div>
-      </details>
-    </div>
-  </section>
+<!-- CASES -->
+<section id="cases" class="section">
+  <h2 class="headline scramble">Case Studies</h2>
+
+  <div class="cases">
+
+    <!-- Duke Energy -->
+    <details class="case glass" open>
+      <summary><b>Duke Energy</b> — Grid Reliability & Demand Forecasting</summary>
+      <div class="case-body">
+        <div class="row">
+          <div class="quick-stats">
+            <div class="stat"><span>2</span><small>tracks</small></div>
+            <div class="stat"><span>15m–DA</span><small>horizons</small></div>
+            <div class="stat"><span>GBM/LSTM</span><small>stack</small></div>
+            <div class="stat"><span>Ops</span><small>Power BI</small></div>
+          </div>
+          <div class="badges">
+            <span>Python</span><span>Pandas</span><span>XGBoost</span><span>LightGBM</span>
+            <span>PyTorch LSTM</span><span>Prophet</span><span>Airflow</span><span>Spark</span>
+            <span>PostGIS</span><span>Power BI</span>
+          </div>
+        </div>
+
+        <p><b>Goal:</b> Reduce outage minutes and improve day-ahead demand planning across service territories.</p>
+
+        <details>
+          <summary>Context & Data</summary>
+          <ul>
+            <li><b>Asset & topology:</b> feeders, poles, transformers, work orders.</li>
+            <li><b>Telemetry:</b> AMI interval, SCADA (voltage/current/breakers).</li>
+            <li><b>Exogenous:</b> NOAA weather (temp, wind gust, lightning), NDVI vegetation, terrain, holidays.</li>
+            <li><b>Outages:</b> tickets (start/restore), causes, crew notes.</li>
+          </ul>
+          <p><b>ETL highlights:</b> Feature store keyed by (feeder_id, timestamp); windowed aggregates (1h/6h/24h); geospatial joins (buffers over spans) for vegetation/wind exposure; DQ rules for sensor freezes & clock drift.</p>
+        </details>
+
+        <details>
+          <summary>Methods</summary>
+          <h4>1) Outage Risk (classification)</h4>
+          <p><b>Models:</b> LightGBM/XGBoost with calibrated probabilities; LSTM when temporal effects dominate.<br>
+             <b>Features:</b> prior outage density, wind gust forecast, soil moisture proxy, vegetation density, asset age, work-order backlog, lightning strikes.<br>
+             <b>Output:</b> Prob. of outage per feeder (24–72h) + SHAP driver views.</p>
+
+          <h4>2) Short-Term Load (regression)</h4>
+          <p><b>Models:</b> Hybrid stack — Prophet (calendar/seasonality) + GBM (weather/lag) + LSTM (sequence), blended.<br>
+             <b>Horizon:</b> 15-min/60-min up to 24–48h Day-Ahead.</p>
+        </details>
+
+        <details>
+          <summary>MLOps, Dashboards & Impact</summary>
+          <p><b>Pipelines:</b> Airflow (hourly features, scoring), Spark joins; model registry; drift/calibration monitors.</p>
+          <p><b>Dashboards:</b> Power BI reliability map (risk choropleth, SHAP drivers, vegetation hot-spots) & planning view (DA forecasts vs actuals, weather overlays, intervals).</p>
+          <p><b>Results (qual.):</b> Top-decile feeder targeting captured a disproportionate share of next-day incidents; improved DA MAPE on extreme-weather/holiday regimes; faster restoration via pre-staging.</p>
+        </details>
+
+        <details>
+          <summary>Architecture</summary>
+<pre><code>Ingestion → Bronze → Silver → Feature Store
+                 ↓                ↓
+        Weather/Lightning     AMI/SCADA/Topology
+                 ↓                ↓
+        Train (GBM/LSTM/Prophet) → Registry
+                         ↓
+               Batch/Stream Inference
+                         ↓
+Power BI + Alerts (ServiceNow/SMS) + Crew Exports
+</code></pre>
+        </details>
+
+        <details>
+          <summary>What I Did & Next</summary>
+          <ul>
+            <li>Designed feature store & windowing; PostGIS geospatial joins (NDVI, buffers).</li>
+            <li>Implemented GBM/LSTM/Prophet + stacking; SHAP & calibration.</li>
+            <li>Productionized with Airflow & drift monitoring; authored Power BI & runbooks.</li>
+          </ul>
+          <p><b>Next:</b> quantile outage minutes, extreme-weather scenarios, DER-aware load, active learning triggers.</p>
+        </details>
+      </div>
+    </details>
+
+    <!-- Spare-Part Demand Forecasting -->
+    <details class="case glass">
+      <summary><b>Spare-Part Demand Forecasting</b> — Intermittent/Lumpy Demand (8×8)</summary>
+      <div class="case-body">
+        <div class="row">
+          <div class="quick-stats">
+            <div class="stat"><span>8</span><small>datasets</small></div>
+            <div class="stat"><span>8</span><small>methods</small></div>
+            <div class="stat"><span>26</span><small>week horizon</small></div>
+            <div class="stat"><span>R</span><small>pipeline</small></div>
+          </div>
+          <div class="badges">
+            <span>R</span><span>dplyr</span><span>tsintermittent</span><span>forecast</span>
+            <span>nnet (MLP)</span><span>LightGBM</span><span>Metrics</span>
+          </div>
+        </div>
+
+        <p><b>Goal:</b> Benchmark methods for intermittent/lumpy spare-parts demand and pick the simplest model that works by pattern.</p>
+
+        <details>
+          <summary>Data & ETL</summary>
+          <p>8 weekly series (~3.5y each): 4 industrial-like, 4 simulated (seasonal/trended/lumpy). Schema: <code>date</code>, <code>demand</code>.</p>
+          <ul>
+            <li>Clean → negatives/NA to 0; sort dates; save <code>RawData.RData</code> & <code>CleanedData.Rda</code>.</li>
+            <li>Describe → zero share, CV², avg zero-gap; classify: smooth / intermittent / lumpy.</li>
+          </ul>
+        </details>
+
+        <details>
+          <summary>Methods & Evaluation</summary>
+          <p><b>Methods (8):</b> Naive, SES, Croston, SBA, TSB, Willemain (bootstrap gaps/sizes), MLP (nnet), LightGBM.</p>
+          <p><b>Eval:</b> last 26 weeks holdout; metrics: sMAPE, MAE, MAPE → <code>results_metrics.csv</code> + <code>Results.RData</code>.</p>
+          <p><b>Findings:</b> TSB/SBA dominate at high zero-share; LightGBM/MLP shine on trend/seasonality; Croston solid classic; practical router: if zero-share &gt; 40% → TSB/SBA, else LightGBM/MLP.</p>
+        </details>
+
+        <details>
+          <summary>How to Run (R)</summary>
+<pre><code># deps
+install.packages(c("dplyr","readr","stringr","lubridate","forecast","nnet","Metrics","tsintermittent"))
+# LightGBM install: https://lightgbm.readthedocs.io/
+
+# from project root:
+source("Cleaning_Description_Classification.R")
+source("Methods.R")  # writes results_metrics.csv + Results.RData
+</code></pre>
+          <p><small>Scripts include intentionally informal hash-comments per brief.</small></p>
+        </details>
+
+        <div class="cta-row">
+          <a class="btn primary" href="sandbox:/mnt/data/Spare-Part-Demand-Forecasting.zip" download>⬇️ Download Project (ZIP)</a>
+        </div>
+      </div>
+    </details>
+
+    <!-- Keep one of your original examples if you want -->
+    <details class="case glass">
+      <summary><b>Canvas → Analytics</b> — nightly sync + warehouse schema</summary>
+      <div class="case-body">
+        <p><b>Context:</b> Systems tracked courses &amp; instructors differently.</p>
+        <p><b>Solution:</b> Python/REST sync; canonical tables.</p>
+        <p><b>Impact:</b> A reliable single-source-of-truth.</p>
+      </div>
+    </details>
+
+  </div>
+</section>
+
+<style>
+  /* light styling for stats & badges so it blends with your .glass cards */
+  .case .quick-stats{ display:flex; gap:.6rem; flex-wrap:wrap; margin:.4rem 0 .6rem }
+  .case .stat{ min-width:96px; text-align:center; padding:.6rem .7rem; border-radius:10px;
+               background: var(--card, rgba(127,127,127,.08)); border:1px solid rgba(127,127,127,.15) }
+  .case .stat span{ display:block; font-weight:700 }
+  .case .stat small{ opacity:.75 }
+  .case .badges{ display:flex; flex-wrap:wrap; gap:.4rem; margin:.2rem 0 .8rem }
+  .case .badges span{ font-size:.82rem; padding:.28rem .55rem; border-radius:999px;
+                      background: rgba(127,127,127,.10); border:1px dashed rgba(127,127,127,.25) }
+  .cta-row{ margin-top:.8rem }
+  .btn.primary{ display:inline-block; padding:.6rem .9rem; border-radius:10px; font-weight:600;
+                background: linear-gradient(180deg, #3a7bd5, #00d2ff); color:#002b36; text-decoration:none;
+                box-shadow: 0 6px 18px rgba(0,150,255,.25) }
+</style>
+
 
   <!-- CERTS -->
   <section id="certs" class="section glass">
