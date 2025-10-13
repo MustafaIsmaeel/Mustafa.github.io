@@ -239,7 +239,10 @@
 
     <!-- Duke Energy -->
     <details class="case glass" open>
-      <summary><b>Duke Energy</b> — Grid Reliability & Demand Forecasting</summary>
+      <summary>
+        <b>Duke Energy</b> — Grid Reliability & Demand Forecasting
+        <span class="case-date"> • <time datetime="2024-11">Nov 2024</time> – <time datetime="2025-06">Jun 2025</time></span>
+      </summary>
       <div class="case-body">
         <div class="row">
           <div class="quick-stats">
@@ -310,12 +313,20 @@ Power BI + Alerts (ServiceNow/SMS) + Crew Exports
           </ul>
           <p><b>Next:</b> quantile outage minutes, extreme-weather scenarios, DER-aware load, active learning triggers.</p>
         </details>
+
+        <div class="cta-row">
+          <!-- Replace with your real GitHub repo URL -->
+          <a class="btn primary" href="https://github.com/yourname/duke-energy-grid-forecasting" target="_blank" rel="noopener">🔗 View on GitHub</a>
+        </div>
       </div>
     </details>
 
     <!-- Spare-Part Demand Forecasting -->
     <details class="case glass">
-      <summary><b>Spare-Part Demand Forecasting</b> — Intermittent/Lumpy Demand (8×8)</summary>
+      <summary>
+        <b>Spare-Part Demand Forecasting</b> — Intermittent/Lumpy Demand (8×8)
+        <span class="case-date"> • <time datetime="2025-10">Oct 2025</time></span>
+      </summary>
       <div class="case-body">
         <div class="row">
           <div class="quick-stats">
@@ -362,14 +373,15 @@ source("Methods.R")  # writes results_metrics.csv + Results.RData
         </details>
 
         <div class="cta-row">
-          <a class="btn primary" href="sandbox:/mnt/data/Spare-Part-Demand-Forecasting.zip" download>⬇️ Download Project (ZIP)</a>
+          <!-- Replace with your real GitHub repo URL -->
+          <a class="btn primary" href="https://github.com/yourname/spare-part-demand-forecasting" target="_blank" rel="noopener">🔗 View on GitHub</a>
         </div>
       </div>
     </details>
 
-    <!-- Keep one of your original examples if you want -->
+    <!-- (Optional) Keep one original example -->
     <details class="case glass">
-      <summary><b>Canvas → Analytics</b> — nightly sync + warehouse schema</summary>
+      <summary><b>Canvas → Analytics</b> — nightly sync + warehouse schema <span class="case-date"> • <time datetime="2023-04">Apr 2023</time></span></summary>
       <div class="case-body">
         <p><b>Context:</b> Systems tracked courses &amp; instructors differently.</p>
         <p><b>Solution:</b> Python/REST sync; canonical tables.</p>
@@ -381,7 +393,7 @@ source("Methods.R")  # writes results_metrics.csv + Results.RData
 </section>
 
 <style>
-  /* light styling for stats & badges so it blends with your .glass cards */
+  .case-date{ opacity:.7; font-weight:500; }
   .case .quick-stats{ display:flex; gap:.6rem; flex-wrap:wrap; margin:.4rem 0 .6rem }
   .case .stat{ min-width:96px; text-align:center; padding:.6rem .7rem; border-radius:10px;
                background: var(--card, rgba(127,127,127,.08)); border:1px solid rgba(127,127,127,.15) }
