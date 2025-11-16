@@ -200,3 +200,29 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
   .navbar .inner{padding:8px 12px}
   .hero-stats{gap:8px}
 }
+/* COLLAPSIBLE PROJECTS */
+.card-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  padding: 0 14px;
+}
+
+.card.expanded .card-body {
+  max-height: 500px; /* enough to show full content */
+  padding: 14px;
+}
+
+/* Reduce card size */
+.card {
+  cursor: pointer;
+  box-shadow: none;
+  transform: none !important;
+}
+.card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+.img-wrap img {
+  height: 140px; /* shrinking project section */
+}
