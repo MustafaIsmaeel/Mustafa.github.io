@@ -237,3 +237,26 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
   filter: none !important;
   transform: none !important;
 }
+/* Experience logos */
+.experience-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.experience-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.exp-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  padding: 6px;
+  border: 1px solid var(--border);
+}
