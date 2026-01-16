@@ -260,3 +260,24 @@ body{margin:0; font:16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Seg
   padding: 6px;
   border: 1px solid var(--border);
 }
+.education-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.edu-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  padding: 8px;
+  border: 1px solid var(--border);
+}
+.exp-logo:hover,
+.edu-logo:hover {
+  box-shadow: 0 0 20px rgba(0,231,255,.45);
+  transform: scale(1.05);
+  transition: all .25s ease;
+}
